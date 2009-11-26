@@ -1,0 +1,23 @@
+diff --git a/lib/rapidsms/message.py b/lib/rapidsms/message.py
+index 6d55978..186e36b 100644
+--- a/lib/rapidsms/message.py
++++ b/lib/rapidsms/message.py
+@@ -55,7 +55,15 @@ class Message(object):
+     def send(self):
+         """Send this message via self.connection.backend, returning
+            True if the message was sent successfully."""
+-        return self.connection.backend.router.outgoing(self)
++        # apply idswitch function if exists
++        try:
++            xc  = copy.copy(self.connection)
++            m = Message(connection=xc, text=self.text, person=self.person, date=self.date)
++            m.connection.identity = self.idswitch(m)
++            return m.connection.backend.router.outgoing(m)
++        except AttributeError:
++            pass
++            return self.connection.backend.router.outgoing(self)
+ 
+     def flush_responses (self):
+         """Sends all responses added to this message (via the
+
+

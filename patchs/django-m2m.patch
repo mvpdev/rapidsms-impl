@@ -1,0 +1,265 @@
+diff --git a/django/db/models/fields/related.py b/django/db/models/fields/related.py
+index 529898e..dcac719 100644
+--- a/django/db/models/fields/related.py
++++ b/django/db/models/fields/related.py
+@@ -405,8 +405,9 @@ def create_many_related_manager(superclass, through=False):
+     """Creates a manager that subclasses 'superclass' (which is a Manager)
+     and adds behavior for many-to-many related objects."""
+     class ManyRelatedManager(superclass):
+-        def __init__(self, model=None, core_filters=None, instance=None, symmetrical=None,
+-                join_table=None, source_col_name=None, target_col_name=None):
++        def __init__(self, model=None, core_filters=None, instance=None,
++                     symmetrical=None, join_table=None, source_col_name=None,
++                     target_col_name=None, field_name=None, reverse=False):
+             super(ManyRelatedManager, self).__init__()
+             self.core_filters = core_filters
+             self.model = model
+@@ -417,6 +418,8 @@ def create_many_related_manager(superclass, through=False):
+             self.target_col_name = target_col_name
+             self.through = through
+             self._pk_val = self.instance._get_pk_val()
++            self.field_name = field_name
++            self.reverse = reverse
+             if self._pk_val is None:
+                 raise ValueError("%r instance needs to have a primary key value before a many-to-many relationship can be used." % instance.__class__.__name__)
+ 
+@@ -498,10 +501,22 @@ def create_many_related_manager(superclass, through=False):
+                 existing_ids = set([row[0] for row in cursor.fetchall()])
+ 
+                 # Add the ones that aren't there already
+-                for obj_id in (new_ids - existing_ids):
++                new_ids = new_ids - existing_ids
++                for obj_id in new_ids:
+                     cursor.execute("INSERT INTO %s (%s, %s) VALUES (%%s, %%s)" % \
+                         (self.join_table, source_col_name, target_col_name),
+                         [self._pk_val, obj_id])
++                added_objs = [obj for obj in objs if \
++                        (isinstance(obj, self.model) and obj._get_pk_val() in new_ids) \
++                        or obj in new_ids]
++                if self.reverse:
++                    sender = self.model
++                else:
++                    sender = self.instance.__class__
++                signals.m2m_changed.send(sender=sender, action='add',
++                    instance=self.instance, model=self.model, 
++                    reverse=self.reverse, field_name=self.field_name, 
++                    objects=added_objs)
+                 transaction.commit_unless_managed()
+ 
+         def _remove_items(self, source_col_name, target_col_name, *objs):
+@@ -524,9 +539,24 @@ def create_many_related_manager(superclass, through=False):
+                     (self.join_table, source_col_name,
+                     target_col_name, ",".join(['%s'] * len(old_ids))),
+                     [self._pk_val] + list(old_ids))
++                if self.reverse:
++                    sender = self.model
++                else:
++                    sender = self.instance.__class__
++                signals.m2m_changed.send(sender=sender, action="remove",
++                    instance=self.instance, model=self.model,
++                    reverse=self.reverse, field_name=self.field_name, 
++                    objects=list(objs))
+                 transaction.commit_unless_managed()
+ 
+         def _clear_items(self, source_col_name):
++            if self.reverse:
++                    sender = self.model
++            else:
++                    sender = self.instance.__class__
++            signals.m2m_changed.send(sender=sender, action="clear",
++                instance=self.instance, model=self.model, reverse=self.reverse, 
++                field_name=self.field_name, objects=None)
+             # source_col_name: the PK colname in join_table for the source object
+             cursor = connection.cursor()
+             cursor.execute("DELETE FROM %s WHERE %s = %%s" % \
+@@ -564,7 +594,9 @@ class ManyRelatedObjectsDescriptor(object):
+             symmetrical=False,
+             join_table=qn(self.related.field.m2m_db_table()),
+             source_col_name=qn(self.related.field.m2m_reverse_name()),
+-            target_col_name=qn(self.related.field.m2m_column_name())
++            target_col_name=qn(self.related.field.m2m_column_name()),
++            field_name=self.related.field.name,
++            reverse=True
+         )
+ 
+         return manager
+@@ -609,7 +641,9 @@ class ReverseManyRelatedObjectsDescriptor(object):
+             symmetrical=(self.field.rel.symmetrical and isinstance(instance, rel_model)),
+             join_table=qn(self.field.m2m_db_table()),
+             source_col_name=qn(self.field.m2m_column_name()),
+-            target_col_name=qn(self.field.m2m_reverse_name())
++            target_col_name=qn(self.field.m2m_reverse_name()),
++            field_name=self.field.name,
++            reverse=False
+         )
+ 
+         return manager
+diff --git a/django/db/models/signals.py b/django/db/models/signals.py
+index 0455336..d5457d3 100644
+--- a/django/db/models/signals.py
++++ b/django/db/models/signals.py
+@@ -12,3 +12,5 @@ pre_delete = Signal(providing_args=["instance"])
+ post_delete = Signal(providing_args=["instance"])
+ 
+ post_syncdb = Signal(providing_args=["class", "app", "created_models", "verbosity", "interactive"])
++
++m2m_changed = Signal(providing_args=["instance", "action", "model", "field_name", "reverse", "objects"])
+diff --git a/docs/ref/signals.txt b/docs/ref/signals.txt
+index cc203f1..32b2e6f 100644
+--- a/docs/ref/signals.txt
++++ b/docs/ref/signals.txt
+@@ -170,6 +170,139 @@ Arguments sent with this signal:
+         Note that the object will no longer be in the database, so be very
+         careful what you do with this instance.
+ 
++m2m_changed
++-----------
++
++.. data:: django.db.models.signals.m2m_changed
++   :module: 
++
++Sent when a :class:`ManyToManyField` is changed on a model instance. 
++Strictly speaking, this is not a model signal since it is sent by the
++:class:`ManyToManyField`, but since it complements the 
++:data:`pre_save`/:data:`post_save` and :data:`pre_delete`/:data:`post_delete`
++when it comes to tracking changes to models, it is included here.
++
++Arguments sent with this signal:
++
++    ``sender``
++        The model class containing the :class:`ManyToManyField`.
++
++    ``instance``
++        The instance whose many-to-many relation is updated. This can be an
++        instance of the ``sender``, or of the class the :class:`ManyToManyField`
++        is related to.
++
++    ``action``
++        A string indicating the type of update that is done on the relation. 
++        This can be one of the following:
++        
++        ``"add"``
++            Sent *after* one or more objects are added to the relation,
++        ``"remove"``        
++            Sent *after* one or more objects are removed from the relation,
++        ``"clear"``
++            Sent *before* the relation is cleared.
++        
++    ``model``
++        The class of the objects that are added to, removed from or cleared 
++        from the relation.
++        
++    ``field_name``
++        The name of the :class:`ManyToManyField` in the ``sender`` class.
++        This can be used to identify which relation has changed 
++        when multiple many-to-many relations to the same model 
++        exist in ``sender``.
++        
++    ``reverse``
++    	Indicates which side of the relation is updated.
++    	It is ``False`` for updates on an instance of the ``sender`` and
++        ``True`` for updates on an instance of the related class.
++        
++    ``objects``
++        With the ``"add"`` and ``"remove"`` action, this is a list of
++        objects that have been added to or removed from the relation.
++        The class of these objects is given in the ``model`` argument.
++        
++        For the ``"clear"`` action, this is ``None`` .
++        
++        Note that if you pass primary keys to the ``add`` or ``remove`` method
++        of a relation, ``objects`` will contain primary keys, not instances.
++        Also note that if you pass objects to the ``add`` method that are 
++        already in the relation, they will not be in the ``objects`` list.
++        (This doesn't apply to ``remove``.)
++        
++For example, if a ``Pizza`` can have multiple ``Topping`` objects, modeled
++like this:
++
++.. code-block:: python
++
++    class Topping(models.Model):
++        # ...
++
++    class Pizza(models.Model):
++        # ...
++        toppings = models.ManyToManyField(Topping)
++
++If we would do something like this:
++
++.. code-block:: python
++
++    >>> p = Pizza.object.create(...)
++    >>> t = Topping.objects.create(...)
++    >>> p.toppings.add(t)
++	
++the arguments sent to a :data:`m2m_changed` handler would be:
++
++    ==============  ============================================================
++    Argument        Value
++    ==============  ============================================================
++    ``sender``      ``Pizza`` (the class containing the field)
++
++    ``instance``    ``p`` (the ``Pizza`` instance being modified)
++
++    ``action``      ``"add"`` since the ``add`` method was called
++    
++    ``model``       ``Topping`` (the class of the objects added to the
++                    ``Pizza``)
++    
++    ``reverse``     ``False`` (since ``Pizza`` contains the 
++                    :class:`ManyToManyField`)
++    
++    ``field_name``  ``"topping"`` (the name of the :class:`ManyToManyField`)
++    
++    ``objects``     ``[t]`` (since only ``Topping t`` was added to the relation)
++    ==============  ============================================================
++
++And if we would then do something like this:
++
++.. code-block:: python
++
++    >>> t.pizza_set.remove(p)
++	
++the arguments sent to a :data:`m2m_changed` handler would be:
++
++    ==============  ============================================================
++    Argument        Value
++    ==============  ============================================================
++    ``sender``      ``Pizza`` (the class containing the field)
++
++    ``instance``    ``t`` (the ``Topping`` instance being modified)
++
++    ``action``      ``"remove"`` since the ``remove`` method was called
++    
++    ``model``       ``Pizza`` (the class of the objects removed from the 
++                    ``Topping``)
++    
++    ``reverse``     ``True`` (since ``Pizza`` contains the
++                    :class:`ManyToManyField` but the relation is modified
++                    through ``Topping``)
++    
++    ``field_name``  ``"topping"`` (the name of the :class:`ManyToManyField`)
++    
++    ``objects``     ``[p]`` (since only ``Pizza p`` was removed from the 
++                    relation)
++    ==============  ============================================================
++
+ class_prepared
+ --------------
+ 
+diff --git a/docs/topics/signals.txt b/docs/topics/signals.txt
+index 6f66b03..3539093 100644
+--- a/docs/topics/signals.txt
++++ b/docs/topics/signals.txt
+@@ -28,7 +28,10 @@ notifications:
+ 
+       Sent before or after a model's :meth:`~django.db.models.Model.delete`
+       method is called.
++      
++    * :data:`django.db.models.signals.m2m_changed`
+ 
++      Sent when a :class:`ManyToManyField` on a model is changed.
+ 
+     * :data:`django.core.signals.request_started` &
+       :data:`django.core.signals.request_finished`

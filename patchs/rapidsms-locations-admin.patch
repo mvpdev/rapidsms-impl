@@ -1,0 +1,17 @@
+diff --git a/apps/locations/admin.py b/apps/locations/admin.py
+index 7adac12..6341cb4 100644
+--- a/apps/locations/admin.py
++++ b/apps/locations/admin.py
+@@ -5,6 +5,10 @@
+ from django.contrib import admin
+ from locations.models import *
+ 
++class LocationAdmin(admin.ModelAdmin):
++    list_display    = ('__unicode__', 'code', 'type', 'parent',)
++    list_filter = ['type',]
++    ordering    = ('name',)
+ 
+ admin.site.register(LocationType)
+-admin.site.register(Location)
++admin.site.register(Location, LocationAdmin)
+

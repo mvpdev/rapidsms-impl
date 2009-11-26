@@ -1,0 +1,16 @@
+diff --git a/apps/webapp/static/stylesheets/layout.css b/apps/webapp/static/stylesheets/layout.css
+index 3fba1ad..0f0cfbf 100644
+--- a/apps/webapp/static/stylesheets/layout.css
++++ b/apps/webapp/static/stylesheets/layout.css
+@@ -125,8 +125,8 @@ div.clear-hack {
+        /* global tabs sit on the right,
+         * page-specific tabs sit on the
+         * left, to draw more attention */
+-       #tabs      { right: 0; }
+-       #page-tabs { left: 0;  }
++       #tabs      { left: 0; }
++       #page-tabs { right: 0;  }
+        
+                #tabs li,
+                #page-tabs li {
+
