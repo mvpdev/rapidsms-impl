@@ -52,9 +52,12 @@ import sys, os, copy
 from ConfigParser import ConfigParser, NoOptionError
 import getopt
 
+SELF_PATH=sys.path[0]
+
 class Repository(object):
     ''' holds repository information '''
 
+    isself    = False
     ident   = None
     url     = None
     name    = None
@@ -63,6 +66,7 @@ class Repository(object):
     tag     = None
     install = False
     patch   = None
+    patchs  = None
     patch_target    = None
     fcopy           = None
     fcopy_target    = None
@@ -83,6 +87,12 @@ class Repository(object):
             return ""
         else:
             return self.rev
+
+    def __str__(self):
+        return "%s/%s" % (self.name, self.url)
+
+    def __unicode__(self):
+        return self.__str__()
 
 class FeederRepository(Repository):
     ''' Repository which holds apps to link '''
@@ -195,6 +205,9 @@ class GitCommander(object):
 
         for rep in repos:
 
+            if rep.isself:
+                continue
+
             print "Entering repository %s" % rep.name
 
             init_dir = os.getcwd()
@@ -231,11 +244,25 @@ class GitCommander(object):
             if rep.patch and rep.patch_target:
                 target  = self.repo_by_ident(rep.patch_target)
                 if target == None:
-                    print " Error with patch localization."
+                    print " Error with patch location."
                     continue
                 folder  = os.path.join(self.others_dir, target.name)
                 rep_dir = os.path.join(self.others_dir, rep.name)
                 GitCommander.patch(folder, os.path.join(rep_dir, rep.patch))
+
+            if rep.patchs:
+                print " Applying multiple patchs (%s)" % rep.patchs.__len__()
+                for patch_target, patch in rep.patchs:
+                    target  = self.repo_by_ident(patch_target)
+                    if target == None:
+                        print " Error with patch location."
+                        continue
+                    folder  = os.path.join(self.others_dir, target.name)
+                    if rep.isself:
+                        rep_dir = SELF_PATH
+                    else:                
+                        rep_dir = os.path.join(self.others_dir, rep.name)
+                    GitCommander.patch(folder, os.path.join(rep_dir, patch))
 
     def copy_additions(self):
 
@@ -246,7 +273,10 @@ class GitCommander(object):
                     print " Error with filecopy location."
                     continue
                 folder  = os.path.join(self.others_dir, target.name)
-                rep_dir = os.path.join(self.others_dir, rep.name)
+                if rep.isself:
+                    rep_dir = SELF_PATH
+                else:                
+                    rep_dir = os.path.join(self.others_dir, rep.name)
                 GitCommander.copy(rep_dir, rep.fcopy, os.path.join(folder, rep.fcopy_ftarget))
 
     @classmethod
@@ -344,14 +374,19 @@ class GitConfig(ConfigParser):
     def config_repo(self, ident, main=False):
         ''' configure a named repository '''
 
-        # url is mandatory
-        url     = self.get(ident, 'url')
-
         # get name ; if none, default to section name
         try:
             name    = self.get(ident, 'name')
         except NoOptionError:
             name    = ident
+
+        # url is mandatory
+        try:
+            url     = self.get(ident, 'url', None)
+        except:
+            if not name == 'self':
+                raise
+            url     = None
 
         # revision is optional
         try:
@@ -391,16 +426,29 @@ class GitConfig(ConfigParser):
             fcopy_target    = None
             fcopy_ftarget   = None
 
+        # patchs is optional
+        try:
+            patchs  = self.get(ident, 'patchs')
+            patchst = []
+            for tu in patchs.replace(' ','').split('|'):
+                x   = tu.split(',')
+                patchst.append((x[0], x[1]))
+        except:
+            patchst = None
+
         if main:
             repo    = Repository(url=url, name=name)
         else:
             repo    = FeederRepository(url=url, name=name)
 
+        if name    == 'self':
+            repo.isself = True
         repo.ident  = ident
         repo.rev    = rev
         repo.install= install
         repo.patch  = patch
         repo.patch_target   = patch_target
+        repo.patchs = patchst
         repo.fcopy  = fcopy
         repo.fcopy_target   = fcopy_target
         repo.fcopy_ftarget   = fcopy_ftarget
