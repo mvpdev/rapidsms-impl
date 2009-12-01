@@ -1,0 +1,69 @@
+diff --git a/lib/rapidsms/backends/email.py b/lib/rapidsms/backends/email.py
+index 2deff0f..42d24ed 100644
+--- a/lib/rapidsms/backends/email.py
++++ b/lib/rapidsms/backends/email.py
+@@ -29,20 +29,22 @@ class Backend(backend.Backend):
+     '''
+     _title = "Email"
+     
+-    def configure(self, smtp_host="localhost", smtp_port=25,  
++    def configure(self, smtp_host="localhost", smtp_port=25, smtp_auth=True,
+                   imap_host="localhost", imap_port=143,
+                   username="demo-user@domain.com",
+                   password="secret", 
+-                  use_tls=True, poll_interval=60):
++                  use_tls=True, send_only=False, poll_interval=60):
+         # the default information will not work, users need to configure this
+         # in their settings
+         self.smtp_host = smtp_host
+         self.smtp_port = smtp_port
++        self.smtp_auth = ('yes','1','true').count(unicode(smtp_auth).lower()) > 0
+         self.imap_host = imap_host
+         self.imap_port = imap_port
+         self.username = username 
+         self.password = password
+-        self.use_tls = use_tls 
++        self.use_tls = ('yes','1','true').count(unicode(use_tls).lower()) > 0
++        self.send_only = ('yes','1','true').count(unicode(send_only).lower()) > 0
+         self.poll_interval = poll_interval
+         
+     def _send(self, email_message):
+@@ -57,8 +59,8 @@ class Backend(backend.Backend):
+             s = smtplib.SMTP_SSL(host=self.smtp_host, port=self.smtp_port)
+         else:
+             s = smtplib.SMTP(host=self.smtp_host, port=self.smtp_port)
+-            
+-        s.login(self.username, self.password)
++        if self.smtp_auth:
++            s.login(self.username, self.password)
+         s.sendmail(self.username, [email_message.peer], msg.as_string())
+         s.quit()
+         
+@@ -75,11 +77,12 @@ class Backend(backend.Backend):
+         while self.running:
+             # check for messages, if we find them, ship them off to the
+             # router and go back to sleep
+-            messages = self._get_new_messages()
+-            if messages:
++            
++            if not self.send_only:
++                messages = self._get_new_messages()
+                 for message in messages:
+                     self.router.send(message)
+-                    
++
+             # also process all outbound messages
+             while True:
+                 try:
+@@ -88,7 +91,10 @@ class Backend(backend.Backend):
+                     # break out of while
+                     break
+                 
+-            time.sleep(self.poll_interval)
++            sleep = self.poll_interval
++            while self.running and sleep > 0:
++                time.sleep(1)
++                sleep -= 1
+             
+     def _get_new_messages(self):
+         imap_connection = imaplib.IMAP4_SSL(self.imap_host, self.imap_port)
