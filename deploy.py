@@ -189,6 +189,11 @@ class GitCommander(object):
                 dst_dir = os.path.join(main_apps_dir, app)
 
                 try:
+                    os.unlink(dst_dir)
+                except:
+                    pass
+
+                try:
                     os.symlink(app_dir, dst_dir)
                 except OSError, e:
                     # simlink exist
