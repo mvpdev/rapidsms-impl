@@ -341,6 +341,8 @@ class GitCommander(object):
         if tag:
             os.system("git checkout %(tag)s" % {'tag': tag})
 
+        os.system("git reset --hard")
+
         os.chdir(init_dir)
 
     def repo_by_ident(self, ident):
