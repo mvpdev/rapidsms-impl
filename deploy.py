@@ -21,6 +21,7 @@
     * each [section] represent a repository
     * [main] section represent __your__ main fork (target)
     * [main] is mandatory
+    * [self] section (optional) relates to the rapidsms-impl folder.
     * [sections] accepts several options.
 
     Options:
@@ -30,6 +31,9 @@
     * install (optional boolean): whether or not to install app (setup.py)
     * patch (optional string): target repository (section name) and patch file
     separated by a comma. Example: pygsm, pygsm.patch
+    * patchs (optional string): list of patch-formated instructions (see above)
+    separated by a pipe.
+    Example: rapidsms, email-backend.patch | pygsm, patchs/pygsm-ussd.patch
 
 ** Script usage
 
