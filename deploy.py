@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+# vim: ai ts=4 sts=4 et sw=4 coding=utf-8
+# maintainer: rgaudin
 
-''' 
+'''
     Q&D script to setup rsms apps, mvp way.
 
 ** What does it do ?
@@ -42,47 +44,51 @@
     3. launch: chmod +x deploy.py
     4. launch: ./deploy.py
 
-    * If you have repositories with install=True, 
+    * If you have repositories with install=True,
       sudo will prompt for password (after downloads)
 
     * script accepts two optional parameters:
 
     -c filename : specify a config file instead of install.ini
     -t path : specify a target path instead of .
-    
+
 '''
 
-import sys, os, copy
-from ConfigParser import ConfigParser, NoOptionError
+import sys
+import os
+import copy
 import getopt
+from ConfigParser import ConfigParser, NoOptionError
 
-SELF_PATH=sys.path[0]
+
+SELF_PATH = sys.path[0]
+
 
 class Repository(object):
     ''' holds repository information '''
 
-    isself    = False
-    ident   = None
-    url     = None
-    name    = None
-    branch  = None
-    rev     = 'HEAD'
-    tag     = None
+    isself = False
+    ident = None
+    url = None
+    name = None
+    branch = None
+    rev = 'HEAD'
+    tag = None
     install = False
-    patch   = None
-    patchs  = None
-    patch_target    = None
-    fcopy           = None
-    fcopy_target    = None
-    fcopy_ftarget   = None
+    patch = None
+    patchs = None
+    patch_target = None
+    fcopy = None
+    fcopy_target = None
+    fcopy_ftarget = None
 
     def __init__(self, url=None, name=None):
 
         if url and isinstance(url, str):
-            self.url    = url
+            self.url = url
 
         if name and isinstance(name, str):
-            self.name    = name
+            self.name = name
 
     def get_rev(self):
         ''' return command-line friendly revision string '''
@@ -98,42 +104,43 @@ class Repository(object):
     def __unicode__(self):
         return self.__str__()
 
+
 class FeederRepository(Repository):
     ''' Repository which holds apps to link '''
 
-    apps    = []
+    apps = []
 
     def __init__(self, url=None, name=None):
         super(FeederRepository, self).__init__(url, name)
-        self.apps   = []
+        self.apps = []
 
     def add_app(self, name):
         ''' add named app to the list '''
 
         self.apps.append(name)
-        
+
 
 class GitCommander(object):
     ''' grab, updates and links repositories based on configuration '''
 
-    main    = None
-    others  = []
-    root    = None
+    main = None
+    others = []
+    root = None
     others_dir_name = 'sources'
-    others_dir      = None
+    others_dir = None
 
     def __init__(self, main=None, others=None):
 
         # Add main repository
         if main and isinstance(main, Repository):
-            self.main   = main
+            self.main = main
 
         if others and isinstance(others, (list, tuple)):
             for other in others:
                 self.others.append(other)
 
-        self.root       = os.getcwd()
-    
+        self.root = os.getcwd()
+
     def build(self):
         ''' launchs all build steps sequencialy '''
 
@@ -158,7 +165,7 @@ class GitCommander(object):
     def make_paths(self):
         ''' creates sources placeholder '''
 
-        print "Creating paths"        
+        print "Creating paths"
 
         # make folder for others
         try:
@@ -170,14 +177,14 @@ class GitCommander(object):
             else:
                 raise
 
-        # store repo folders 
+        # store repo folders
         self.others_dir = os.path.join(self.root, self.others_dir_name)
-        self.main_dir   = os.path.join(self.root, self.main.name)
+        self.main_dir = os.path.join(self.root, self.main.name)
 
     def make_symlinks(self):
         ''' creates symlinks in main repo to others' apps '''
-        
-        main_apps_dir   = os.path.join(self.main_dir, 'apps')
+
+        main_apps_dir = os.path.join(self.main_dir, 'apps')
 
         for rep in self.others:
             if rep.apps.__len__() == 0:
@@ -185,8 +192,8 @@ class GitCommander(object):
 
             print " Linkings apps from %s" % rep.name
 
-            rep_dir     = os.path.join(self.others_dir, rep.name)
-            apps_dir    = os.path.join(rep_dir, 'apps')
+            rep_dir = os.path.join(self.others_dir, rep.name)
+            apps_dir = os.path.join(rep_dir, 'apps')
 
             for app in rep.apps:
                 app_dir = os.path.join(apps_dir, app)
@@ -209,7 +216,7 @@ class GitCommander(object):
     def clone_repos(self):
         ''' clones referenced repositories '''
 
-        repos   = copy.copy(self.others)
+        repos = copy.copy(self.others)
         repos.append(self.main)
 
         for rep in repos:
@@ -236,7 +243,7 @@ class GitCommander(object):
             print " Updating repository"
             GitCommander.update_repo(os.path.join(os.getcwd(), rep.name), \
             rep.get_rev(), rep.tag, rep.branch)
-            
+
             # move back
             os.chdir(init_dir)
 
@@ -244,32 +251,32 @@ class GitCommander(object):
 
         for rep in self.others:
             if rep.install:
-                folder  = os.path.join(self.others_dir, rep.name)
+                folder = os.path.join(self.others_dir, rep.name)
                 GitCommander.install(folder)
 
     def apply_patchs(self):
 
         for rep in self.others:
             if rep.patch and rep.patch_target:
-                target  = self.repo_by_ident(rep.patch_target)
+                target = self.repo_by_ident(rep.patch_target)
                 if target == None:
                     print " Error with patch location."
                     continue
-                folder  = os.path.join(self.others_dir, target.name)
+                folder = os.path.join(self.others_dir, target.name)
                 rep_dir = os.path.join(self.others_dir, rep.name)
                 GitCommander.patch(folder, os.path.join(rep_dir, rep.patch))
 
             if rep.patchs:
                 print " Applying multiple patchs (%s)" % rep.patchs.__len__()
                 for patch_target, patch in rep.patchs:
-                    target  = self.repo_by_ident(patch_target)
+                    target = self.repo_by_ident(patch_target)
                     if target == None:
                         print " Error with patch location."
                         continue
-                    folder  = os.path.join(self.others_dir, target.name)
+                    folder = os.path.join(self.others_dir, target.name)
                     if rep.isself:
                         rep_dir = SELF_PATH
-                    else:                
+                    else:
                         rep_dir = os.path.join(self.others_dir, rep.name)
                     GitCommander.patch(folder, os.path.join(rep_dir, patch))
 
@@ -277,20 +284,21 @@ class GitCommander(object):
 
         for rep in self.others:
             if rep.fcopy and rep.fcopy_target and rep.fcopy_ftarget:
-                target  = self.repo_by_ident(rep.fcopy_target)
+                target = self.repo_by_ident(rep.fcopy_target)
                 if target == None:
                     print " Error with filecopy location."
                     continue
-                folder  = os.path.join(self.others_dir, target.name)
+                folder = os.path.join(self.others_dir, target.name)
                 if rep.isself:
                     rep_dir = SELF_PATH
-                else:                
+                else:
                     rep_dir = os.path.join(self.others_dir, rep.name)
-                GitCommander.copy(rep_dir, rep.fcopy, os.path.join(folder, rep.fcopy_ftarget))
+                GitCommander.copy(rep_dir, rep.fcopy, \
+                                  os.path.join(folder, rep.fcopy_ftarget))
 
     @classmethod
     def install(cls, folder):
-        
+
         init_dir = os.getcwd()
 
         os.chdir(folder)
@@ -303,7 +311,7 @@ class GitCommander(object):
 
     @classmethod
     def patch(cls, folder, patch):
-        
+
         init_dir = os.getcwd()
 
         os.chdir(folder)
@@ -316,7 +324,7 @@ class GitCommander(object):
 
     @classmethod
     def copy(cls, folder, source, target):
-        
+
         init_dir = os.getcwd()
 
         os.chdir(folder)
@@ -341,7 +349,7 @@ class GitCommander(object):
                 % {'branch': branch})
 
         os.system("git pull --tags --keep %(rev)s" % {'rev': rev})
-        
+
         if tag:
             os.system("git checkout %(tag)s" % {'tag': tag})
 
@@ -354,16 +362,16 @@ class GitCommander(object):
             if rep.ident == ident:
                 return rep
         return None
-        
+
 
 class GitConfig(ConfigParser):
     ''' configures respositories from a config file '''
 
     def __init__(self, path=None):
-        ConfigParser.__init__(self) 
-        
-        self.repos      = []
-        self.main_repo  = None        
+        ConfigParser.__init__(self)
+
+        self.repos = []
+        self.main_repo = None
 
         if path:
             self.readfp(open(path))
@@ -374,11 +382,11 @@ class GitConfig(ConfigParser):
 
         for repo_name in self.sections():
             ismain = repo_name == 'main'
-            
-            repo    = self.config_repo(repo_name, ismain)
+
+            repo = self.config_repo(repo_name, ismain)
 
             if ismain:
-                self.main_repo  = repo
+                self.main_repo = repo
             else:
                 self.repos.append(repo)
 
@@ -387,25 +395,25 @@ class GitConfig(ConfigParser):
 
         # get name ; if none, default to section name
         try:
-            name    = self.get(ident, 'name')
+            name = self.get(ident, 'name')
         except NoOptionError:
-            name    = ident
+            name = ident
 
         # url is mandatory
         try:
-            url     = self.get(ident, 'url', None)
+            url = self.get(ident, 'url', None)
         except:
             if not name == 'self':
                 raise
-            url     = None
+            url = None
 
         # revision is optional
         try:
-            rev     = self.getint(ident, 'rev')
+            rev = self.getint(ident, 'rev')
         except ValueError:
-            rev     = self.get(ident, 'rev')
+            rev = self.get(ident, 'rev')
         except:
-            rev     = 'HEAD'
+            rev = 'HEAD'
 
         # install is optional
         try:
@@ -415,61 +423,63 @@ class GitConfig(ConfigParser):
 
         # apps is optional (feeder only)
         try:
-            apps    = self.get(ident, 'apps')
-            apps    = apps.replace(' ','').split(',')
+            apps = self.get(ident, 'apps')
+            apps = apps.replace(' ', '').split(',')
         except:
-            apps    = []
+            apps = []
 
         # patch is optional
         try:
-            patch   = self.get(ident, 'patch')
-            patch_target, patch = patch.replace(' ','').split(',')
+            patch = self.get(ident, 'patch')
+            patch_target, patch = patch.replace(' ', '').split(',')
         except:
-            patch   = None
+            patch = None
             patch_target = None
 
         # fcopy is optional
         try:
-            fcopy   =  self.get(ident, 'filecopy')
-            fcopy_target, fcopy, fcopy_ftarget = fcopy.replace(' ','').split(',')
+            fcopy = self.get(ident, 'filecopy')
+            fcopy_target, fcopy, fcopy_ftarget = \
+                                              fcopy.replace(' ', '').split(',')
         except:
-            fcopy           = None
-            fcopy_target    = None
-            fcopy_ftarget   = None
+            fcopy = None
+            fcopy_target = None
+            fcopy_ftarget = None
 
         # patchs is optional
         try:
-            patchs  = self.get(ident, 'patchs')
+            patchs = self.get(ident, 'patchs')
             patchst = []
-            for tu in patchs.replace(' ','').split('|'):
-                x   = tu.split(',')
+            for tu in patchs.replace(' ', '').split('|'):
+                x = tu.split(',')
                 patchst.append((x[0], x[1]))
         except:
             patchst = None
 
         if main:
-            repo    = Repository(url=url, name=name)
+            repo = Repository(url=url, name=name)
         else:
-            repo    = FeederRepository(url=url, name=name)
+            repo = FeederRepository(url=url, name=name)
 
-        if name    == 'self':
+        if name == 'self':
             repo.isself = True
-        repo.ident  = ident
-        repo.rev    = rev
-        repo.install= install
-        repo.patch  = patch
-        repo.patch_target   = patch_target
+        repo.ident = ident
+        repo.rev = rev
+        repo.install = install
+        repo.patch = patch
+        repo.patch_target = patch_target
         repo.patchs = patchst
-        repo.fcopy  = fcopy
-        repo.fcopy_target   = fcopy_target
-        repo.fcopy_ftarget   = fcopy_ftarget
+        repo.fcopy = fcopy
+        repo.fcopy_target = fcopy_target
+        repo.fcopy_ftarget = fcopy_ftarget
 
         try:
-            repo.apps   = apps
+            repo.apps = apps
         except:
             pass
 
         return repo
+
 
 def usage(me):
     print u"Usage:  %s [-c file, --config=file, -t path, --target=path] \n\n \
@@ -478,13 +488,15 @@ def usage(me):
     -t, -target=    Use provided path as home for repositories \
 " % me
 
+
 def main():
 
     config_file = 'install.ini'
-    target      = os.getcwd()
+    target = os.getcwd()
 
-    try:                                
-        opts, args = getopt.getopt(sys.argv[1:], "hc:t:", ["help", "config=","target="])
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hc:t:", \
+                                                ["help", "config=", "target="])
     except getopt.GetoptError:
         usage(sys.argv[0])
         sys.exit(2)
@@ -496,7 +508,7 @@ def main():
         elif o in ("-c", "--config"):
             config_file = a
         elif o in ("-t", "--target"):
-            target      = a
+            target = a
         else:
             assert False, "Unhandled option"
 
@@ -508,9 +520,8 @@ def main():
     config = GitConfig(config_file)
 
     # build folder and clones and everything
-    commander   = GitCommander(main=config.main_repo, others=config.repos)
+    commander = GitCommander(main=config.main_repo, others=config.repos)
     commander.build()
 
 if __name__ == '__main__':
     main()
-
