@@ -1,0 +1,13 @@
+diff --git a/lib/rapidsms/webui/settings.py b/lib/rapidsms/webui/settings.py
+index 164c1e8..9d2f838 100755
+--- a/lib/rapidsms/webui/settings.py
++++ b/lib/rapidsms/webui/settings.py
+@@ -2,7 +2,7 @@
+ # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+ 
+ import os, time
+-import i18n
++import rapidsms.i18n
+ 
+ 
+ DEBUG = True
