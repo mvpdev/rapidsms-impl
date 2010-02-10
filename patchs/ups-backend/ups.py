@@ -33,16 +33,14 @@ class Backend(Backend):
     CAPACITY_UNKNOWN = -1
     STATES = {STATE_ONLINE: 'on-line', STATE_OFFLINE: 'off-line'}
 
-    def configure(self, interval=60, enable='false', \
-                  kind='battery', device='BAT0', ac_device='ADP1'):
+    def configure(self, interval=60, kind='battery', \
+                  device='BAT0', ac_device='ADP1'):
         ''' set backend variables and open file descriptors
 
-        enable: true of false. whether to monitor ups or not.
         interval: delay in second to check battery state
         kind: kind of ups in use (battery only for now)
         device name/file of the ups '''
 
-        self.enabled = str2bool(enable.lower().strip())
         self.interval = int(interval)
         if kind.lower().strip() in ('battery'):
             self.kind = kind.lower().strip()
@@ -57,8 +55,7 @@ class Backend(Backend):
         self.battery_present = False
         self.request_now = False
 
-        if self.enabled:
-            backend.Backend.start(self)
+        backend.Backend.start(self)
 
     def dict_from_file(self, file_):
         ''' returns a dict from /proc-like string '''
