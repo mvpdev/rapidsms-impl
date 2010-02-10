@@ -29,7 +29,7 @@
     Options:
     * url (mandatory string): the URL of the git repository to clone
     * name (recommended string): the name used to refer to that repository.
-    * rev (optional int or HEAD): the revision to pull
+    * rev (optional int): the revision to pull
     * install (optional boolean): whether or not to install app (setup.py)
     * patch (optional string): target repository (section name) and patch file
     separated by a comma. Example: pygsm, pygsm.patch
@@ -72,7 +72,7 @@ class Repository(object):
     url = None
     name = None
     branch = None
-    rev = 'HEAD'
+    rev = None
     tag = None
     install = False
     patch = None
@@ -93,7 +93,7 @@ class Repository(object):
     def get_rev(self):
         ''' return command-line friendly revision string '''
 
-        if self.rev == None or self.rev == 'HEAD':
+        if self.rev == None:
             return ""
         else:
             return self.rev
@@ -343,15 +343,19 @@ class GitCommander(object):
 
         os.chdir(folder)
 
+        # retrieve tags
+        os.system("git fecth --tags --keep")
+
         # select branch if applicable
         if branch:
             os.system("git checkout --track -b %(branch)s origin/%(branch)s" \
                 % {'branch': branch})
 
-        os.system("git pull --tags --keep %(rev)s" % {'rev': rev})
+        if rev:
+            os.system("git checkout -b %(rev)s %(rev)s" % {'rev': rev})
 
         if tag:
-            os.system("git checkout %(tag)s" % {'tag': tag})
+            os.system("git checkout -b %(tag)s %(tag)s" % {'tag': tag})
 
         os.system("git reset --hard")
 
@@ -411,9 +415,8 @@ class GitConfig(ConfigParser):
         try:
             rev = self.getint(ident, 'rev')
         except ValueError:
-            rev = self.get(ident, 'rev')
-        except:
-            rev = 'HEAD'
+            #rev = self.get(ident, 'rev')
+            rev = None
 
         # install is optional
         try:
