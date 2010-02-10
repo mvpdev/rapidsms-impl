@@ -36,6 +36,11 @@
     * patchs (optional string): list of patch-formated instructions (see above)
     separated by a pipe.
     Example: rapidsms, email-backend.patch | pygsm, patchs/pygsm-ussd.patch
+    * filecopy (optional string): repository (section name), file, destination
+    separated by commas. Example: rapidsms, patchs/new.py, lib/rapidsms
+    * filecopies (optional string): list of filecopy-formated instructions
+    (see above) separated by a pipe.
+    Example: rapidsms, new.py, lib/rapidsms | pygsm, patchs/gsm.py, lib/gsm
 
 ** Script usage
 
@@ -77,6 +82,7 @@ class Repository(object):
     install = False
     patch = None
     patchs = None
+    filecopies = None
     patch_target = None
     fcopy = None
     fcopy_target = None
@@ -296,6 +302,21 @@ class GitCommander(object):
                 GitCommander.copy(rep_dir, rep.fcopy, \
                                   os.path.join(folder, rep.fcopy_ftarget))
 
+            if rep.filecopies:
+                print " Copying %s additions" % rep.filecopies.__len__()
+                for ffcopy, ffcopy_target, ffcopy_ftarget in rep.filecopies:
+                    target = self.repo_by_ident(ffcopy_target)
+                    if target == None:
+                        print " Error with filecopy location."
+                        continue
+                    folder = os.path.join(self.others_dir, target.name)
+                    if rep.isself:
+                        rep_dir = SELF_PATH
+                    else:
+                        rep_dir = os.path.join(self.others_dir, rep.name)
+                    GitCommander.copy(rep_dir, ffcopy, \
+                                      os.path.join(folder, ffcopy_ftarget))
+
     @classmethod
     def install(cls, folder):
 
@@ -342,6 +363,8 @@ class GitCommander(object):
         init_dir = os.getcwd()
 
         os.chdir(folder)
+
+        # reset in case it's an existing repo
 
         # retrieve tags
         os.system("git fetch --tags --keep")
@@ -459,6 +482,16 @@ class GitConfig(ConfigParser):
         except:
             patchst = None
 
+        # filecopies is optional
+        try:
+            filecopies = self.get(ident, 'filecopies')
+            filecopiesst = []
+            for tu in filecopies.replace(' ', '').split('|'):
+                x = tu.split(',')
+                filecopies.append((x[0], x[1], x[2]))
+        except:
+            filecopiesst = None
+
         if main:
             repo = Repository(url=url, name=name)
         else:
@@ -475,6 +508,7 @@ class GitConfig(ConfigParser):
         repo.fcopy = fcopy
         repo.fcopy_target = fcopy_target
         repo.fcopy_ftarget = fcopy_ftarget
+        repo.filecopies = filecopiesst
 
         try:
             repo.apps = apps
