@@ -344,7 +344,7 @@ class GitCommander(object):
         os.chdir(folder)
 
         # retrieve tags
-        os.system("git fecth --tags --keep")
+        os.system("git fetch --tags --keep")
 
         # select branch if applicable
         if branch:
