@@ -414,7 +414,7 @@ class GitConfig(ConfigParser):
         # revision is optional
         try:
             rev = self.getint(ident, 'rev')
-        except ValueError:
+        except (NoOptionError, ValueError):
             #rev = self.get(ident, 'rev')
             rev = None
 
