@@ -23,7 +23,7 @@ from rapidsms.message import Message
 class Backend(Backend):
 
     def configure(self, interval=60, incoming='.pipe_backend_in', \
-                  outgoing='.pipe_backend_out'):
+                  outgoing='/dev/null'):
         ''' set backend variables and open file descriptors '''
         self.interval = int(interval)
         self.incoming = incoming.strip()
@@ -85,7 +85,7 @@ class Backend(Backend):
         backend.Backend.stop(self)
 
         # release descriptors
-        if incoming_file is not None:
+        if self.incoming_file is not None:
             self.incoming_file.close()
 
         if outgoing_file is not None:
