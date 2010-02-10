@@ -287,9 +287,10 @@ class GitCommander(object):
                     GitCommander.patch(folder, os.path.join(rep_dir, patch))
 
     def copy_additions(self):
-
+        print "File Additions"
         for rep in self.others:
             if rep.fcopy and rep.fcopy_target and rep.fcopy_ftarget:
+                print " Copying addition"
                 target = self.repo_by_ident(rep.fcopy_target)
                 if target == None:
                     print " Error with filecopy location."
@@ -304,7 +305,7 @@ class GitCommander(object):
 
             if rep.filecopies:
                 print " Copying %s additions" % rep.filecopies.__len__()
-                for ffcopy, ffcopy_target, ffcopy_ftarget in rep.filecopies:
+                for ffcopy_target, ffcopy, ffcopy_ftarget in rep.filecopies:
                     target = self.repo_by_ident(ffcopy_target)
                     if target == None:
                         print " Error with filecopy location."
@@ -488,7 +489,7 @@ class GitConfig(ConfigParser):
             filecopiesst = []
             for tu in filecopies.replace(' ', '').split('|'):
                 x = tu.split(',')
-                filecopies.append((x[0], x[1], x[2]))
+                filecopiesst.append((x[0], x[1], x[2]))
         except:
             filecopiesst = None
 
