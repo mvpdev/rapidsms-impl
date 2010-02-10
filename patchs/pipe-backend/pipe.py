@@ -88,5 +88,5 @@ class Backend(Backend):
         if self.incoming_file is not None:
             self.incoming_file.close()
 
-        if outgoing_file is not None:
+        if self.outgoing_file is not None:
             self.outgoing_file.close()
