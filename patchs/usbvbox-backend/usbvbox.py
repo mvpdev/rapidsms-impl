@@ -17,7 +17,7 @@ import backend
 
 class Backend(Backend):
 
-    def configure(self, vm='rsms', uuid):
+    def configure(self, uuid, vm='rsms'):
         ''' set backend variables and open file descriptors '''
         self.vm = vm.strip()
         self.uuid = uuid.strip()
