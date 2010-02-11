@@ -31,6 +31,8 @@ class Backend(Backend):
         for f in (self.incoming, self.outgoing):
             if not os.path.exists(f):
                 open(f, 'w').close()
+        self.outgoing_file = None
+        self.incoming_file = None
 
     def run(self):
         ''' reads incoming file and create message objects from it '''

@@ -22,6 +22,11 @@ class Backend(Backend):
         self.vm = vm.strip()
         self.uuid = uuid.strip()
 
+        self.cat = "/usr/bin/VBoxManage controlvm %(vm)s usbattach %(uuid)s" \
+                    % {'vm': self.vm, 'uuid': self.uuid}
+        self.cde = "/usr/bin/VBoxManage controlvm %(vm)s usbdetach %(uuid)s" \
+                    % {'vm': self.vm, 'uuid': self.uuid}
+
         self.usb_reload()
 
     def run(self):
@@ -35,9 +40,5 @@ class Backend(Backend):
     def usb_reload(self):
         ''' detach then attach usb device on host '''
         # calls host vbox manager to detach/attach
-        c = subprocess.call(['/usr/bin/ssh', 'childcount@host', \
-                  "/usr/bin/VBoxManage controlvm %(vm)s usbdetach %(uuid)s'" \
-            % {'vm': self.vm, 'uuid': self.uuid}])
-        c = subprocess.call(['/usr/bin/ssh', 'childcount@host', \
-                  "/usr/bin/VBoxManage controlvm %(vm)s usbattach %(uuid)s'" \
-            % {'vm': self.vm, 'uuid': self.uuid}])
+        c = subprocess.call(['/usr/bin/ssh', 'childcount@host', self.cde])
+        c = subprocess.call(['/usr/bin/ssh', 'childcount@host', self.cat])
