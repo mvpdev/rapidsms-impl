@@ -17,10 +17,10 @@ import backend
 
 class Backend(Backend):
 
-    def configure(self, uuid, vm='rsms'):
+    def configure(self, usb_vbox_uuid, vm='rsms'):
         ''' set backend variables and open file descriptors '''
         self.vm = vm.strip()
-        self.uuid = uuid.strip()
+        self.uuid = usb_vbox_uuid.strip()
 
         self.cat = "/usr/bin/VBoxManage controlvm %(vm)s usbattach %(uuid)s" \
                     % {'vm': self.vm, 'uuid': self.uuid}

@@ -64,8 +64,8 @@ def edit_localini(uuid):
     output = []
     original = open(LOCALINI, 'r')
     for line in original:
-        if line.startswith('uuid='):
-            line = 'uuid=%s\n' % uuid
+        if line.startswith('usb_vbox_uuid='):
+            line = 'usb_vbox_uuid=%s\n' % uuid
         output.append(line)
     original.close()
 
