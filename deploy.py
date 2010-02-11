@@ -370,10 +370,16 @@ class GitCommander(object):
         # retrieve tags
         os.system("git fetch --tags --keep")
 
+        # update
+        os.system("git pull")
+
         # select branch if applicable
         if branch:
             os.system("git checkout --track -b %(branch)s origin/%(branch)s" \
                 % {'branch': branch})
+
+            # update
+            os.system("git pull")
 
         if rev:
             os.system("git checkout -b %(rev)s %(rev)s" % {'rev': rev})
