@@ -442,6 +442,13 @@ class GitConfig(ConfigParser):
             #rev = self.get(ident, 'rev')
             rev = None
 
+        # branch is optional
+        try:
+            branch = self.get(ident, 'branch').strip()
+        except NoOptionError:
+            #rev = self.get(ident, 'rev')
+            branch = None
+
         # install is optional
         try:
             install = self.getboolean(ident, 'install')
@@ -502,6 +509,7 @@ class GitConfig(ConfigParser):
             repo.isself = True
         repo.ident = ident
         repo.rev = rev
+        repo.branch = branch
         repo.install = install
         repo.patch = patch
         repo.patch_target = patch_target
