@@ -36,6 +36,8 @@ class Backend(Backend):
         ''' detach then attach usb device on host '''
         # calls host vbox manager to detach/attach
         c = subprocess.call(['/usr/bin/ssh', 'childcount@host', \
-                  '"/usr/bin/VBoxManage controlvm %(vm)s usbdetach %(uuid)s"'])
+                  "/usr/bin/VBoxManage controlvm %(vm)s usbdetach %(uuid)s'" \
+            % {'vm': self.vm, 'uuid': self.uuid}])
         c = subprocess.call(['/usr/bin/ssh', 'childcount@host', \
-                  '"/usr/bin/VBoxManage controlvm %(vm)s usbattach %(uuid)s"'])
+                  "/usr/bin/VBoxManage controlvm %(vm)s usbattach %(uuid)s'" \
+            % {'vm': self.vm, 'uuid': self.uuid}])
