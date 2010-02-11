@@ -37,11 +37,14 @@ class Backend(Backend):
                   device='BAT0', ac_device='ADP1'):
         ''' set backend variables and open file descriptors
 
-        interval: delay in second to check battery state
+        interval: delay in second to check battery state (only offline)
         kind: kind of ups in use (battery only for now)
         device name/file of the ups '''
 
-        self.interval = int(interval)
+        self.ac_interval = 3
+        self.batt_interval = int(interval)
+        self.interval = self.ac_interval
+
         if kind.lower().strip() in ('battery'):
             self.kind = kind.lower().strip()
         self.device = device.strip()
@@ -122,6 +125,11 @@ class Backend(Backend):
 
                 # remove request
                 self.request_now = False
+
+                # set long interval off-battery
+                self.interval = self.batt_interval \
+                                if state == self.STATE_OFFLINE \
+                                else self.ac_interval
 
             # wait a bit then poll file again
             time.sleep(self.interval)
