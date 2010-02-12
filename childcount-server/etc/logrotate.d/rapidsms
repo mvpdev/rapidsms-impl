@@ -1,0 +1,8 @@
+/var/log/rapidsms.log /var/log/rapidsms.*.log {
+        rotate 1
+        weekly
+        compress
+        copytruncate
+        missingok
+}
+
