@@ -4,6 +4,8 @@
 
 import subprocess
 import re
+import logging
+import logging.handlers
 
 # define target HW identifiers
 VENDOR_ID = '06e0'
@@ -79,14 +81,21 @@ def edit_localini(uuid):
 
 def main():
 
+    name = 'usbvbox'
+    logger = logging.getLogger('')
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(logging.handlers.SysLogHandler(address='/dev/log', \
+                                                     facility='daemon'))
+
+
     uuid = get_uuid()
     if uuid == None:
-        print "Can't find your device. Script configured ?"
+        logging.error("%s: Can't find your device. Script configured ?" % name)
         exit(1)
     else:
-        print "Found USB UUID: %s" % uuid
+        logging.error("%s: Found USB UUID: %s" % (name, uuid))
     edit_localini(uuid)
-    print "Edited local.ini file (%s)" % LOCALINI
+    logging.info("%s: Edited local.ini file (%s)" % (name, LOCALINI))
 
 
 if __name__ == '__main__':
