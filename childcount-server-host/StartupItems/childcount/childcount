@@ -1,0 +1,38 @@
+#!/bin/bash
+
+##
+# childcount vbox helper
+# starts our VMs on startup
+# sends clean shutdown on host shutdown
+##
+
+. /etc/rc.common
+
+StartService ()
+{
+    ConsoleMessage "childcount startup"
+    # call childcount vbox wrapper
+    su childcount -c '/usr/bin/childcount --startall'
+}
+
+StopService ()
+{
+    ConsoleMessage "childcount shutdown (sleeping up-to 120 seconds)"
+    su childcount -c '/usr/bin/childcount --stopall'
+    I=0
+    while [ `ps ax |grep VBoxHeadless |grep -cv "grep"` != 0 ] && [ $I -lt 120 ]
+    do
+        sleep 1
+        I=$(($I + 1))
+        /bin/echo -n "."
+    done
+}
+
+RestartService ()
+{
+    StopService
+    StartService
+}
+
+RunService "$1"
+

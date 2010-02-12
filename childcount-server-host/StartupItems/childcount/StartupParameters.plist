@@ -1,0 +1,10 @@
+{
+Description = "childcount vbox helper";
+Provides = ("childcount");
+Requires = ("Network");
+OrderPreference = "Late";
+Messages = {
+start = "Starting childcount vbox";
+stop = "Stopping childcount vbox";
+};
+}

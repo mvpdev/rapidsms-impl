@@ -1,0 +1,6 @@
+
+# childcount StartupItem
+
+copy childcount folder to /Library/StartupItems/
+chown -R root:wheel /Library/StartupItems/childcount
+chmod -R 755 /Library/StartupItems/childcount
