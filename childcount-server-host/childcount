@@ -125,8 +125,7 @@ def main():
     for name in machines:
         vm = VirtualMachine(name)
 
-    usage = "usage: %prog [options] arg"
-    parser = OptionParser(usage)
+    parser = OptionParser()
 
     parser.description = "Handy wrapper around virtualbox for childcount"
 
@@ -151,9 +150,6 @@ def main():
                       help="displays info for the VM named [VM].")
 
     (options, args) = parser.parse_args()
-
-    if len(args) == 0:
-        parser.error("No argument specified.")
 
 
 if __name__ == '__main__':
