@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 # crontab -e on childcount user
 # on childcount host.
 #
 # # reverse ssh tunnel keep-alive
-# */3 * * * * /bin/sh /usr/bin/reverse_ssh
+# */3 * * * * /bin/bash /usr/bin/reverse_ssh
 COMMAND="ssh -N -f -R linode.mvpafrica.org:2210:localhost:22 linode.mvpafrica.org"
-pgrep -f -x "$COMMAND" > /dev/null 2>&1 || $COMMAND
+ps ax |grep "$COMMAND" |grep -v "grep" > /dev/null 2>&1 || $COMMAND
