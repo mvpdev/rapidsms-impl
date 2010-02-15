@@ -6,7 +6,7 @@
 
     reads and writes messages from/to regular files.
 
-    syntax: timestamp identity message
+    syntax: identity message
 
     identity *can not* contain spaces. '''
 
@@ -53,14 +53,14 @@ class Backend(Backend):
                 mtext = mtext.strip()
 
                 # check syntax
-                if not re.match("^[0-9]{10} [a-zA-Z0-9\-\_]+ .*$", mtext):
+                if not re.match("^[a-zA-Z0-9\-\_\+]+ .*$", mtext):
                     continue
 
                 try:
-                    smsi = mtext.split(" ", 2)
-                    mtime = datetime.utcfromtimestamp(int(smsi[0]))
-                    identity = smsi[1]
-                    text = smsi[2]
+                    smsi = mtext.split(" ", 1)
+                    mtime = datetime.now()
+                    identity = smsi[0]
+                    text = smsi[1]
                 except (AttributeError, IndexError, ValueError, TypeError):
                     # not a well formatted message. skipping.
                     continue
