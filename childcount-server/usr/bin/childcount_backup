@@ -1,0 +1,181 @@
+#!/bin/bash
+# vim: ai ts=4 sts=4 et sw=4 coding=utf-8
+# maintainer: rgaudin
+
+# CONFIGURE THE FOLLOWING VARIABLES
+# ALSO AVAILABLE AT /root/.backup_config
+
+SIGN_KEY=
+ENCRYPT_KEY=
+ADMIN_NUM=
+CC_KEY_PASS=
+
+### END OF MANUAL CONFIGURATION ###
+
+if [ -r /root/.backup_config ]; then
+    source /root/.backup_config
+fi
+
+REMOTE_USER="childcount"
+REMOTE_HOST="host"
+SD_ROOT="/Users/childcount/SD-BACKUP"
+USB_ROOT="/Volumes/usb-backup"
+INC_DIR="history"
+LAST_DIR="latest"
+DUP="rsync://$REMOTE_USER@$REMOTE_HOST/$USB_ROOT"
+DUP_TARGET="$DUP/$INC_DIR"
+DUP_SD_TARGET="$DUP/$LAST_DIR"
+SQL_TARGET="/backup"
+SMS_PIPE="/tmp/childcount_pipe"
+DUP_LOG="$SQL_TARGET/duplicity.log"
+
+#rsms
+RSMS_SQL_USER="childcount"
+RSMS_SQL_PASS="childcount"
+RSMS_DB="childcount"
+RSMS_SQL_OUT="$SQL_TARGET/rsms.sql"
+RSMS_SQL_HOST="localhost"
+
+#omrs
+OMRS_SQL_USER="openmrs"
+OMRS_SQL_PASS="openmrs"
+OMRS_DB="openmrs"
+OMRS_SQL_OUT="$SQL_TARGET/omrs.sql"
+OMRS_SQL_HOST="intomrs"
+
+check_config()
+{
+    echo -n "Backup script configuration..."
+    ACTION="Backup configuration"
+    if [[ -z $SIGN_KEY || -z $ENCRYPT_KEY || -z $ADMIN_NUM || -z $CC_KEY_PASS ]]; then
+        return 1
+    fi
+}
+
+mysql_backup()
+{
+    ACTION="$TARGET mysql dump"
+    echo "dumping $DB database. Will take some time..."
+    start=`date +%x-%X`
+    echo -n "$ACTION..."
+    mysqldump -h $SQL_HOST -u$SQL_USER -p$SQL_PASS $DB > $SQL_OUT
+    RETVAL=$?
+    return $RETVAL
+}
+
+sms_admin()
+{
+    if [ $? -ne 0 ]; then
+        echo "failed. exiting."
+        now=`date +%x-%X`
+        if [[ -n $ADMIN_NUMBER ]]; then
+            echo "backup admin:$ACTION started on $start failed to complete at $now." >> $SMS_PIPE
+        fi
+        unset PASSPHRASE
+        exit $?
+    else
+        echo "succeeded."
+    fi
+}
+
+duplicity_backup()
+{
+    ACTION="$TARGET duplicity backup"
+    echo "encrypting and transfering backup to host."
+    start=`date +%x-%X`
+    echo "$ACTION..."
+    ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p $USB_ROOT/$INC_DIR"
+    export PASSPHRASE=$CC_KEY_PASS
+    duplicity --sign-key "$SIGN_KEY" --encrypt-key "$ENCRYPT_KEY" --log-file $DUP_LOG $SQL_TARGET $DUP_TARGET
+    RETVAL=$?
+    unset PASSPHRASE
+    echo -n "$ACTION..."
+    return $RETVAL
+}
+
+duplicity_full_backup()
+{
+    ACTION="$TARGET duplicity full backup"
+    echo "encrypting and transfering backup to host."
+    start=`date +%x-%X`
+    echo "$ACTION..."
+
+    # create target folder if not exists    
+    ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p $USB_ROOT/$LAST_DIR"
+    
+    export PASSPHRASE=$CC_KEY_PASS
+    duplicity full --sign-key "$SIGN_KEY" --encrypt-key "$ENCRYPT_KEY" --log-file $DUP_LOG $SQL_TARGET $DUP_SD_TARGET
+    RETVAL=$?
+    unset PASSPHRASE
+
+    ssh $REMOTE_USER@$REMOTE_HOST "echo `date +%d-%m-%Y` > $USB_ROOT/latest/time"
+    
+    echo -n "$ACTION..."
+    return $RETVAL
+}
+
+backup_rsms()
+{
+    TARGET="rsms"
+    SQL_USER=$RSMS_SQL_USER
+    SQL_PASS=$RSMS_SQL_PASS
+    DB=$RSMS_DB
+    SQL_OUT=$RSMS_SQL_OUT
+    SQL_HOST=$RSMS_SQL_HOST
+
+    mysql_backup
+    sms_admin
+}
+
+backup_omrs()
+{
+    TARGET="omrs"
+    SQL_USER=$OMRS_SQL_USER
+    SQL_PASS=$OMRS_SQL_PASS
+    DB=$OMRS_DB
+    SQL_OUT=$OMRS_SQL_OUT
+    SQL_HOST=$OMRS_SQL_HOST
+
+    mysql_backup
+    sms_admin
+}
+
+backup_sd()
+{
+    ACTION="$TARGET duplicity SD backup"
+
+    echo "Move previous backup if exists"
+    ssh $REMOTE_USER@$REMOTE_HOST "if [ -d $SD_ROOT/latest ]; then mv $SD_ROOT/latest $SD_ROOT/backup_; fi"
+    ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p $SD_ROOT/latest && ls -l $SD_ROOT/latest && cp -r $USB_ROOT/latest/ $SD_ROOT/latest/ && echo OK" > /tmp/.bck.out
+    RETVAL=$?
+    if [[ $RETVAL -eq 0 && `cat /tmp/.bck.out |tail -n 1` == "OK" ]]; then
+        ssh $REMOTE_USER@$REMOTE_HOST "cat $SD_ROOT/latest/time" > /tmp/now
+        time=`cat /tmp/now`
+        ssh $REMOTE_USER@$REMOTE_HOST "mv $SD_ROOT/backup_ $SD_ROOT/backup_$time"
+        return 0;
+    else
+        return 1;
+    fi
+    return $RETVAL
+}
+
+# check variables are filled
+check_config
+sms_admin
+
+# mysql backups
+backup_rsms
+backup_omrs
+
+# incremental backup
+duplicity_backup
+sms_admin
+
+# full backup
+duplicity_full_backup
+sms_admin
+
+# copy full to SD
+backup_sd
+sms_admin
+
