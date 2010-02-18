@@ -21,7 +21,7 @@ fi
 
 REMOTE_USER="childcount"
 REMOTE_HOST="host"
-SD_ROOT="/Users/childcount/SD-BACKUP"
+SD_ROOT="/Volumes/SD-BACKUP"
 USB_ROOT="/Volumes/usb-backup"
 INC_DIR="history"
 LAST_DIR="latest"
