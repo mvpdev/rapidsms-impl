@@ -1,0 +1,6 @@
+#!/bin/sh
+# vim: ai ts=4 sts=4 et sw=4 coding=utf-8
+# maintainer: rgaudin
+
+test -x /usr/bin/low_space || exit 0
+/usr/bin/low_space

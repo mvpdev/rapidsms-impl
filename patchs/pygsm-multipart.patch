@@ -1,0 +1,36 @@
+diff --git a/lib/pygsm/devicewrapper.py b/lib/pygsm/devicewrapper.py
+index 71a584d..a561afc 100644
+--- a/lib/pygsm/devicewrapper.py
++++ b/lib/pygsm/devicewrapper.py
+@@ -16,19 +16,19 @@ class DeviceWrapper(object):
+         # force cast strings from the .ini (which show up
+         # in kwargs) to ints because strings seem to make
+         # pySerial on Windows unhappy
+-        
+-        for key in ['baudrate', 
+-                    'xonxoff',
+-                    'rtscts',
+-                    'stopbits',
+-                    'timeout'
+-                    ]:
+-            if key in kwargs:
+-                try:
++
++        serial_keys = ['port',
++                       'baudrate', 
++                       'xonxoff',
++                       'rtscts',
++                       'stopbits',
++                       'timeout']
++        for key in kwargs.keys():
++            if key in serial_keys:
++                if kwargs[key].isdigit():
+                     kwargs[key] = int(kwargs[key])
+-                except:
+-                    # not a valid value, just remove
+-                    kwargs.pop(key)
++            else:
++                kwargs.pop(key)
+ 
+         self.device = serial.Serial(*args, **kwargs)
+         self.logger = logger
