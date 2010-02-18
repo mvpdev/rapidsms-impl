@@ -1,8 +1,8 @@
 diff --git a/lib/pygsm/gsmmodem.py b/lib/pygsm/gsmmodem.py
-index 1b89a07..5b9c2c8 100644
+index 8595ea4..e822366 100644
 --- a/lib/pygsm/gsmmodem.py
 +++ b/lib/pygsm/gsmmodem.py
-@@ -850,6 +850,45 @@ class GsmModem(object):
+@@ -573,6 +573,45 @@ class GsmModem(object):
          # remove the message that has been waiting
          # longest from the queue, and return it
          return self.incoming_queue.pop(0)
