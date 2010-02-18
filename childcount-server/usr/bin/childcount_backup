@@ -10,6 +10,9 @@ ENCRYPT_KEY=
 ADMIN_NUM=
 CC_KEY_PASS=
 
+DISABLE_USB=0
+DISABLE_SD=0
+
 ### END OF MANUAL CONFIGURATION ###
 
 if [ -r /root/.backup_config ]; then
@@ -18,7 +21,7 @@ fi
 
 REMOTE_USER="childcount"
 REMOTE_HOST="host"
-SD_ROOT="/Users/childcount/SD-BACKUP"
+SD_ROOT="/Volumes/SD-BACKUP"
 USB_ROOT="/Volumes/usb-backup"
 INC_DIR="history"
 LAST_DIR="latest"
@@ -69,7 +72,7 @@ sms_admin()
         echo "failed. exiting."
         now=`date +%x-%X`
         if [[ -n $ADMIN_NUMBER ]]; then
-            echo "backup admin:$ACTION started on $start failed to complete at $now." >> $SMS_PIPE
+            echo "backup $ADMIN_NUM:$ACTION started on $start failed to complete at $now." >> $SMS_PIPE
         fi
         unset PASSPHRASE
         exit $?
@@ -168,14 +171,17 @@ backup_rsms
 backup_omrs
 
 # incremental backup
-duplicity_backup
-sms_admin
+if [ $DISABLE_USB -eq 0 ]; then
+    duplicity_backup
+    sms_admin
 
-# full backup
-duplicity_full_backup
-sms_admin
+    # full backup
+    duplicity_full_backup
+    sms_admin
+fi
 
 # copy full to SD
-backup_sd
-sms_admin
-
+if [ $DISABLE_SD -eq 0 ]; then
+    backup_sd
+    sms_admin
+fi
