@@ -1,5 +1,5 @@
 diff --git a/apps/logger/models.py b/apps/logger/models.py
-index 8b9c3e1..137b6c0 100644
+index 8b9c3e1..0bafb6d 100644
 --- a/apps/logger/models.py
 +++ b/apps/logger/models.py
 @@ -6,7 +6,7 @@ from django.db import models
@@ -7,7 +7,7 @@ index 8b9c3e1..137b6c0 100644
  
  class MessageBase(models.Model):
 -    text = models.CharField(max_length=140)
-+    text = models.CharField(max_length=160)
++    text = models.CharField(max_length=459)
      # TODO save connection title rather than wacky object string?
      identity = models.CharField(max_length=150)
      backend = models.CharField(max_length=150)
