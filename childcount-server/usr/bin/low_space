@@ -1,0 +1,53 @@
+#!/bin/bash
+# vim: ai ts=4 sts=4 et sw=4 coding=utf-8
+# maintainer: rgaudin
+
+# CONFIGURE THE FOLLOWING VARIABLES
+# ALSO AVAILABLE AT /root/.backup_config
+
+ADMIN_NUM="admin"
+
+### END OF MANUAL CONFIGURATION ###
+
+REMOTE_USER="childcount"
+REMOTE_HOST="host"
+OMRS_USER="mvp"
+OMRS_HOST="omrs"
+SMS_PIPE="/tmp/childcount_pipe"
+
+if [ -r /root/.backup_config ]; then
+    source /root/.backup_config
+fi
+
+check_space()
+{
+    echo -n "low-space $ADMIN_NUM:Low space alert on $HOSTNAME:"
+    echo "$GREP" | grep -vE '^Filesystem|tmpfs|cdrom|map|none|devfs' | while read output;
+    do
+        mount=$(echo $output | awk '{ print $6}')
+        output=$(echo $output |awk '{ print $5 " " $1 }')
+        usep=$(echo $output | awk '{ print $1}' | cut -d'%' -f1  )
+        partition=$(echo $output | awk '{ print $2 }' )
+
+        if [ $usep -ge 90 ]; then
+            echo -n " $mount ($usep%)"
+        fi
+    done
+echo -n " as of $(date).
+"
+}
+
+# check rms machine (local)
+HOSTNAME=`hostname`
+GREP=`df -HP`
+check_space >> $SMS_PIPE
+
+# check omrs machine
+HOSTNAME=`ssh $OMRS_USER@$OMRS_HOST "hostname"`
+GREP=`ssh $OMRS_USER@$OMRS_HOST "df -HP"`
+check_space >> $SMS_PIPE
+
+# check host
+HOSTNAME=`ssh $REMOTE_USER@$REMOTE_HOST "hostname"`
+GREP=`ssh $REMOTE_USER@$REMOTE_HOST "df -HP"`
+check_space >> $SMS_PIPE
