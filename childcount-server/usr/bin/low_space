@@ -12,7 +12,7 @@ ADMIN_NUM="admin"
 REMOTE_USER="childcount"
 REMOTE_HOST="host"
 OMRS_USER="mvp"
-OMRS_HOST="omrs"
+OMRS_HOST="intomrs"
 SMS_PIPE="/tmp/childcount_pipe"
 
 if [ -r /root/.backup_config ]; then
@@ -21,7 +21,6 @@ fi
 
 check_space()
 {
-    echo -n "low-space $ADMIN_NUM:Low space alert on $HOSTNAME:"
     echo "$GREP" | grep -vE '^Filesystem|tmpfs|cdrom|map|none|devfs' | while read output;
     do
         mount=$(echo $output | awk '{ print $6}')
@@ -30,17 +29,15 @@ check_space()
         partition=$(echo $output | awk '{ print $2 }' )
 
         if [ $usep -ge 90 ]; then
-            echo -n " $mount ($usep%)"
+            echo "low-space $ADMIN_NUM:Low space alert on $HOSTNAME: $mount ($usep%) as of $(date)." >> $SMS_PIPE
         fi
     done
-echo -n " as of $(date).
-"
 }
 
 # check rms machine (local)
 HOSTNAME=`hostname`
 GREP=`df -HP`
-check_space >> $SMS_PIPE
+check_space
 
 # check omrs machine
 HOSTNAME=`ssh $OMRS_USER@$OMRS_HOST "hostname"`
