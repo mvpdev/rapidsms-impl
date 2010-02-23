@@ -65,7 +65,7 @@ class DEHttpHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         
         # if the path is of the form /integer/blah 
         # send a new message from integer with content blah
-        send_regex = re.compile(r"^/(\d+)/(.*)")
+        send_regex = re.compile(r"^/([a-zA-Z0-9\s\-\.]+)/(.*)")
         match = send_regex.match(self.path)
         if match:
             # send the message
