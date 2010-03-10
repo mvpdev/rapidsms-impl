@@ -1,0 +1,385 @@
+diff --git a/apps/reporters/admin.py b/apps/reporters/admin.py
+index 4cabe92..5b6b521 100644
+--- a/apps/reporters/admin.py
++++ b/apps/reporters/admin.py
+@@ -6,8 +6,6 @@ from django.contrib import admin
+ from reporters.models import *
+ 
+ 
+-admin.site.register(Role)
+ admin.site.register(Reporter)
+-admin.site.register(ReporterGroup)
+ admin.site.register(PersistantBackend)
+ admin.site.register(PersistantConnection)
+diff --git a/apps/reporters/app.py b/apps/reporters/app.py
+index fe635ad..e694766 100644
+--- a/apps/reporters/app.py
++++ b/apps/reporters/app.py
+@@ -165,7 +165,7 @@ class App(rapidsms.app.App):
+         try:
+             # parse the name, and create a reporter
+             alias, fn, ln = Reporter.parse_name(name)
+-            rep = Reporter(alias=alias, first_name=fn, last_name=ln)
++            rep = Reporter(username=alias, first_name=fn, last_name=ln)
+             rep.save()
+             
+             # attach the reporter to the current connection
+@@ -188,7 +188,7 @@ class App(rapidsms.app.App):
+             # give me reporter.
+             # if no alias will match,
+             # exception must raise
+-            rep = Reporter.objects.get(alias=alias)
++            rep = Reporter.objects.get(username=alias)
+             
+         # no such alias, but we can be pretty sure that the message
+         # was for us, since it matched a pretty specific pattern
+diff --git a/apps/reporters/models.py b/apps/reporters/models.py
+index 0dd2894..3f78af7 100644
+--- a/apps/reporters/models.py
++++ b/apps/reporters/models.py
+@@ -6,71 +6,30 @@ import re
+ from datetime import datetime
+ from django.db import models
+ from django.core.urlresolvers import reverse
+-from rapidsms.webui.managers import *
+-from patterns.models import Pattern
++from django.contrib.auth.models import User, UserManager
+ from locations.models import *
+ 
+ 
+-# TODO: remove this. it's a slightly weird version
+-#       of ReporterGroup, which can't be nested. i'm
+-#       not sure how it happened in the first place.
+-
+-class Role(models.Model):
+-    """Basic representation of a role that someone can have.  For example,
+-       'supervisor' or 'data entry clerk'"""
+-    name = models.CharField(max_length=160)
+-    code = models.CharField(max_length=20, blank=True, null=True,\
+-        help_text="Abbreviation")
+-    patterns = models.ManyToManyField(Pattern, null=True, blank=True)
+-    
+-    def match(self, token):
+-        return self.regex and re.match(self.regex, token, re.IGNORECASE)
+-    
+-    @property
+-    def regex(self):
+-        # convenience accessor for joining patterns
+-        return Pattern.join(self.patterns)
+-    
+-    def __unicode__(self):
+-        return self.name
+-
+-
+-class ReporterGroup(models.Model):
+-    title       = models.CharField(max_length=30, unique=True)
+-    parent      = models.ForeignKey("self", related_name="children", null=True, blank=True)
+-    description = models.TextField(blank=True)
+-    objects     = RecursiveManager()
+-    
+-    
+-    class Meta:
+-        verbose_name = "Group"
+-
+-    
+-    def __unicode__(self):
+-        return self.title
+-    
+-    
+-    # TODO: rename to something that indicates
+-    #       that it's a counter, not a queryset    
+-    def members(self):
+-        return self.reporters.all().count()
+-
+-
+-class Reporter(models.Model):
++class Reporter(User):
+     """This model represents a KNOWN person, that can be identified via
+        their alias and/or connection(s). Unlike the RapidSMS Person class,
+        it should not be used to represent unknown reporters, since that
+        could lead to multiple objects for the same "person". Usually, this
+        model should be created through the WebUI, in advance of the reporter
+        using the system - but there are always exceptions to these rules..."""
+-    alias      = models.CharField(max_length=20, unique=True)
+-    first_name = models.CharField(max_length=30, blank=True)
+-    last_name  = models.CharField(max_length=30, blank=True)
+-    groups     = models.ManyToManyField(ReporterGroup, related_name="reporters", blank=True)
++
++    def _get_alias(self):
++        return self.username
++
++    def _set_alias(self, alias):
++        self.username = alias
++
++    alias = property(_get_alias, _set_alias)
+     
+     # here are some fields that don't belong here
+     location   = models.ForeignKey(Location, related_name="reporters", null=True, blank=True)
+-    role       = models.ForeignKey(Role, related_name="reporters", null=True, blank=True)
++
++    objects = UserManager()
+ 
+     def __unicode__(self):
+         return self.connection().identity
+@@ -90,11 +49,6 @@ class Reporter(models.Model):
+     #
+     language = models.CharField(max_length=10, blank=True)
+ 	
+-    # although it's impossible to enforce, if a user registers
+-    # themself (via the app.py backend), this flag should be set
+-    # indicate that they probably shouldn't be trusted
+-    registered_self = models.BooleanField()
+-	
+ 	
+     class Meta:
+         ordering = ["last_name", "first_name"]
+@@ -109,9 +63,7 @@ class Reporter(models.Model):
+     
+     
+     def full_name(self):
+-        return ("%s %s" % (
+-            self.first_name,
+-            self.last_name)).strip()
++        return self.get_full_name()
+     
+     def __unicode__(self):
+         return self.full_name()
+@@ -143,8 +95,7 @@ class Reporter(models.Model):
+             # we may want to make this more lax
+             filters = {"first_name" : reporter.first_name,
+                        "last_name" : reporter.last_name,
+-                       "location" : reporter.location,
+-                       "role" : reporter.role } 
++                       "location" : reporter.location } 
+             existing_reps = Reporter.objects.filter(**filters)
+             for existing_rep in existing_reps:
+                 if existing_rep == existing_conn.reporter:
+@@ -183,7 +134,7 @@ class Reporter(models.Model):
+             # that we return might be taken before we have time to do anything
+             # with it! This should logic should probably be moved to the
+             # initializer, to make the find/grab alias loop atomic
+-            while klass.objects.filter(alias__iexact=alias).count():
++            while klass.objects.filter(username__iexact=alias).count():
+                 alias = "%s%d" % (str.lower(), n)
+                 n += 1
+             
+diff --git a/apps/reporters/templates/reporters/group.html b/apps/reporters/templates/reporters/group.html
+index cd0dc29..9412d9e 100644
+--- a/apps/reporters/templates/reporters/group.html
++++ b/apps/reporters/templates/reporters/group.html
+@@ -7,26 +7,8 @@
+ 	
+ 	<form method="post" id="fm-grp-add" action="/groups/{% if group %}{{ group.pk }}{% else %}add{% endif %}">
+ 		<div>
+-			<label for="fm-grp-add-title">Title</label>
+-			<input type="text" class="required" id="fm-grp-add-title" name="title"{% if group %} value="{{ group.title }}"{% endif %} />
+-		</div>
+-		<div>
+-			<label for="fm-grp-add-desc">Description</label>
+-			<textarea id="fm-grp-add-desc" name="description" rows="6" cols="40">{% if group %}{{ group.description }}{% endif %}</textarea>
+-			<p class="help">
+-				If provided, the text is displayed to users attempting to send a
+-				bulk message to this group, to ensure they understand what it is.
+-			</p>
+-		</div>
+-		<div id="fm-grp-add-groups">
+-			<label>Parent Group</label>
+-			<select name="parent_id" size="6">
+-				<option value=""{% if not group.parent %} selected="selected"{% endif %} class="na">None</option>{% for group in all_groups %}
+-				<option value="{{ group.pk }}" class="depth-{{ group.depth }}"{% if group.selected %} selected="selected"{% endif %}>{{ group.title }}</option>{% endfor %}
+-			</select>
+-			<p class="help">
+-				The other Group that <em>{% if group %}{{ group.title }}{% else %}this group{% endif %}</em> is contained by.
+-			</p>
++			<label for="fm-grp-add-name">Name</label>
++			<input type="text" class="required" id="fm-grp-add-name" name="name"{% if group %} value="{{ group.name }}"{% endif %} />
+ 		</div>
+ 		<div class="submit">
+ 			<input type="submit" value="{% if group %}Save Changes{% else %}Add Group{% endif %}" />{% if group %}
+diff --git a/apps/reporters/templates/reporters/index.html b/apps/reporters/templates/reporters/index.html
+index 9121e49..a013f3c 100644
+--- a/apps/reporters/templates/reporters/index.html
++++ b/apps/reporters/templates/reporters/index.html
+@@ -62,14 +62,14 @@
+ 	<table>
+ 		<thead>
+ 			<tr>
+-				<th scope="col">Title</th>
++				<th scope="col">Name</th>
+ 				<th scope="col">Members</th>
+ 			</tr>
+ 		</thead>
+ 		<tbody>{% if groups.object_list %}{% for group in groups.object_list %}
+-			<tr class="depth-{{ group.depth }}">
+-				<td class="indent"><span><a href="/groups/{{ group.pk }}"{% if group.title %}>{{ group.title }}{% else %} class="unknown">Unknown{% endif %}</a></span></td>
+-				<td>{{ group.members }}</td>
++			<tr class="depth-1">
++				<td class="indent"><span><a href="/groups/{{ group.pk }}">{{ group.name }}</a></span></td>
++				<td>{{ group.user_set.count }}</td>
+ 			</tr>{% endfor %}{% else %}
+ 			<tr class="no-data">
+ 				<td colspan="3">
+diff --git a/apps/reporters/templates/reporters/reporter.html b/apps/reporters/templates/reporters/reporter.html
+index e66e36c..b61e8a2 100644
+--- a/apps/reporters/templates/reporters/reporter.html
++++ b/apps/reporters/templates/reporters/reporter.html
+@@ -8,7 +8,7 @@
+ 	<form method="post" id="fm-rep-add" action="/reporters/{% if reporter %}{{ reporter.pk }}{% else %}add{% endif %}">
+ 		<div>
+ 			<label for="fm-rep-add-alias">Alias</label>
+-			<input type="text" class="required" id="fm-rep-add-alias" name="alias"{% if reporter %} value="{{ reporter.alias }}"{% endif %} />
++			<input type="text" class="required" id="fm-rep-add-alias" name="username"{% if reporter %} value="{{ reporter.username }}"{% endif %} />
+ 			<p class="help">Must be alphanumeric, up to 20 characters.</p>
+ 		</div>
+ 		<div>
+@@ -47,13 +47,13 @@
+ 			<div>
+ 				<select name="group">
+ 					<option></option>{% for my_group in all_groups %}
+-					<option value="{{ my_group.pk }}" class="depth-{{ my_group.depth }}"{% ifequal my_group group %} selected="selected"{% endifequal %}>{{ my_group.title }}</option>{% endfor %}
++					<option value="{{ my_group.pk }}" class="depth-1"{% ifequal my_group group %} selected="selected"{% endifequal %}>{{ my_group.name }}</option>{% endfor %}
+ 				</select>
+ 			</div>{% endfor %}{% else %}
+ 			<div>
+ 				<select name="group">
+ 					<option></option>{% for my_group in all_groups %}
+-					<option value="{{ my_group.pk }}" class="depth-{{ my_group.depth }}">{{ my_group.title }}</option>{% endfor %}
++					<option value="{{ my_group.pk }}" class="depth-1">{{ my_group.name }}</option>{% endfor %}
+ 				</select>
+ 			</div>{% endif %}{% else %}
+ 			<div class="no-data">
+diff --git a/apps/reporters/views.py b/apps/reporters/views.py
+index 10e0948..a917d37 100644
+--- a/apps/reporters/views.py
++++ b/apps/reporters/views.py
+@@ -7,6 +7,7 @@ from django.views.decorators.http import require_GET, require_POST, require_http
+ from django.contrib.auth.decorators import permission_required
+ from django.shortcuts import get_object_or_404
+ from django.db import transaction
++from django.contrib.auth.models import Group
+ 
+ from rapidsms.webui.utils import *
+ from reporters.models import *
+@@ -27,7 +28,7 @@ def index(req):
+     return render_to_response(req,
+         "reporters/index.html", {
+         "reporters": paginated(req, Reporter.objects.all(), prefix="rep"),
+-        "groups":    paginated(req, ReporterGroup.objects.flatten(), prefix="grp"),
++        "groups":    paginated(req, Group.objects.all(), prefix="grp"),
+     })
+ 
+ 
+@@ -39,8 +40,8 @@ def check_reporter_form(req):
+         field.verbose_name
+         for field in Reporter._meta.fields
+         if req.POST.get(field.name, "") == ""
+-           and field.blank == False]
+-    
++           and field.blank == False and field.default == None]
++
+     # TODO: add other validation checks,
+     # or integrate proper django forms
+     return {
+@@ -95,7 +96,7 @@ def update_reporter(req, rep):
+             continue
+         
+         # link this group to the reporter
+-        grp = ReporterGroup.objects.get(pk=grp_id)
++        grp = Group.objects.get(pk=grp_id)
+         rep.groups.add(grp)
+         
+         # if this group was already
+@@ -107,7 +108,8 @@ def update_reporter(req, rep):
+     # delete all of the connections and groups 
+     # which were NOT in the form we just received
+     rep.connections.filter(pk__in=del_conns).delete()
+-    rep.groups.filter(pk__in=del_grps).delete()
++    for grp in rep.groups.filter(pk__in=del_grps):
++        rep.groups.remove(grp)
+ 
+ 
+ @require_http_methods(["GET", "POST"])
+@@ -134,7 +136,7 @@ def add_reporter(req):
+                 "connections": connections,
+                 
+                 # list all groups + backends in the edit form
+-                "all_groups": ReporterGroup.objects.flatten(),
++                "all_groups": Group.objects.all(),
+                 "all_backends": PersistantBackend.objects.all() })
+ 
+     @transaction.commit_manually
+@@ -190,7 +192,7 @@ def edit_reporter(req, pk):
+                 "reporters": paginated(req, Reporter.objects.all()),
+                 
+                 # list all groups + backends in the edit form
+-                "all_groups": ReporterGroup.objects.flatten(),
++                "all_groups": Group.objects.all(),
+                 "all_backends": PersistantBackend.objects.all(),
+                 
+                 # split objects linked to the editing reporter into
+@@ -258,19 +260,15 @@ def add_group(req):
+     if req.method == "GET":
+         return render_to_response(req,
+             "reporters/group.html", {
+-                "all_groups": ReporterGroup.objects.flatten(),
+-                "groups": paginated(req, ReporterGroup.objects.flatten()) })
++                "all_groups": Group.objects.all(),
++                "groups": paginated(req, Group.objects.all()) })
+         
+     elif req.method == "POST":
+         
+         # create a new group using the flat fields,
+         # then resolve and update the parent group
+         # TODO: resolve foreign keys in i_via_q
+-        grp = insert_via_querydict(ReporterGroup, req.POST)
+-        parent_id = req.POST.get("parent_id", "")
+-        if parent_id:
+-            grp.parent = get_object_or_404(
+-                ReporterGroup, pk=parent_id)
++        grp = insert_via_querydict(Group, req.POST)
+         
+         grp.save()
+         
+@@ -281,23 +279,23 @@ def add_group(req):
+ 
+ @require_http_methods(["GET", "POST"])
+ def edit_group(req, pk):
+-    grp = get_object_or_404(ReporterGroup, pk=pk)
++    grp = get_object_or_404(Group, pk=pk)
+     
+     if req.method == "GET":
+         
+         # fetch all groups, to be displayed
+         # flat in the "parent group" field
+-        all_groups = ReporterGroup.objects.flatten()
++        all_groups = Group.objects.all()
+         
+         # iterate the groups, to mark one of them
+         # as selected (the editing group's parent)
+         for this_group in all_groups:
+-            if grp.parent == this_group:
++            if grp == this_group:
+                 this_group.selected = True
+         
+         return render_to_response(req,
+             "reporters/group.html", {
+-                "groups": paginated(req, ReporterGroup.objects.flatten()),
++                "groups": paginated(req, Group.objects.all()),
+                 "all_groups": all_groups,
+                 "group": grp })
+     
+@@ -317,14 +315,6 @@ def edit_group(req, pk):
+         # TODO: resolve foreign keys in u_via_q
+         else:
+             update_via_querydict(grp, req.POST)
+-            parent_id = req.POST.get("parent_id", "")
+-            if parent_id:
+-                grp.parent = get_object_or_404(
+-                    ReporterGroup, pk=parent_id)
+-            
+-            # if no parent_id was passed, we can assume
+-            # that the field was cleared, and remove it
+-            else: grp.parent = None
+             grp.save()
+             
+             return message(req,
