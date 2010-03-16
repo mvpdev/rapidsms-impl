@@ -1,0 +1,13 @@
+diff --git a/lib/pygsm/gsmmodem.py b/lib/pygsm/gsmmodem.py
+index 8595ea4..134cad5 100644
+--- a/lib/pygsm/gsmmodem.py
++++ b/lib/pygsm/gsmmodem.py
+@@ -221,7 +221,7 @@ class GsmModem(object):
+ 
+         # enable new message notification
+         self.command(
+-            "AT+CNMI=2,2,0,0,0",
++            "AT+CNMI=2,1,0,0,0",
+             raise_errors=False)
+ 
+ 
