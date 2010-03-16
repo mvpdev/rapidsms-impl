@@ -4,15 +4,12 @@
 
 ''' DataEntry Backend
 
-Simple HTTP backend which respond JSON to POST requests.
-WIP: do not use. '''
+Simple HTTP backend which respond JSON to POST requests. '''
 
 import BaseHTTPServer
 import SocketServer
 import select
 import random
-import re
-import urllib
 import json
 from datetime import datetime
 from urlparse import parse_qs
@@ -20,14 +17,16 @@ from urlparse import parse_qs
 import rapidsms
 
 
-def _uni(str):
+def _uni(str_):
+    ''' decode unicode/utf-8 string '''
     try:
-        return unicode(str)
+        return unicode(str_)
     except:
-        return unicode(str, 'utf-8')
+        return unicode(str_, 'utf-8')
 
 
 def _str(uni):
+    ''' encode string as utf8 '''
     try:
         return str(uni)
     except:
@@ -45,6 +44,11 @@ class HttpServer (BaseHTTPServer.HTTPServer, SocketServer.ThreadingMixIn):
 
 
 class DEHttpHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    ''' HTTP Server handling incoming messages
+
+    Only respond to HTTP POST request. '''
+
+    msg_store = {}
 
     def log_error(self, format, *args):
         self.server.backend.error(format, *args)
@@ -53,54 +57,84 @@ class DEHttpHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.server.backend.debug(format, *args)
 
     def respond(self, code, msg):
+        ''' sends according html string with according status code '''
         self.send_response(code)
         self.send_header("Content-type", "text/html")
         self.end_headers()
         self.wfile.write(_str(msg))
 
     def respond_json(self, msg):
+        ''' sends according string with JSON header '''
         self.send_response(200)
         self.send_header("Content-type", "application/json")
         self.end_headers()
         self.wfile.write(_str(msg))
 
-    msg_store = {}
-
     def do_GET(self):
+        ''' responds empty content. '''
 
-        self.respond(200, u"Hey, nothing there pal. Try POST.")
+        self.respond(200, u"POST?")
         return
 
+    def json_from_message(self, message):
+
+        json = {'peer': message.peer, 'text': message.text, \
+                'status': message.status}
+        return json
+
     def do_POST(self):
+        ''' Handles incoming message and list available ones
+
+        retrieves parameters from HTTP POST dictionary
+
+        A. creates message object from parameters
+           sends the message to the router
+
+        B. reads one message from the pool
+           writes it to the client
+
+        Parameters:
+        - action: if 'list' then triggers B. workflow
+        - identity (mandatory): the identity string of sender/requester
+        - message: the text to send'''
 
         # retrieve and parse HTTP POST data
         content_length = int(self.headers['Content-Length'])
         encoded_data = self.rfile.read(content_length)
         decoded_data = parse_qs(encoded_data)
 
-        try:
-            identity = _uni(decoded_data['identity'][0])
-        except (KeyError, TypeError):
-            identity = None
+        incoming_msg = {}
 
-        try:
-            message = _uni(decoded_data['message'][0])
-        except (KeyError, TypeError):
-            message = None
+        # sanitize (utf8) all input parameters
+        for (key, data) in decoded_data.items():
+            try:
+                if decoded_data[key].__len__() == 1:
+                    ddata = _uni(decoded_data[key][0])
+                else:
+                    ddata = []
+                    for each in decoded_data[key]:
+                        ddata.append(_uni(each))
+                incoming_msg[key] = ddata
+            except:
+                pass
 
-        try:
-            action = _uni(decoded_data['action'][0])
-        except (KeyError, TypeError):
-            action = None
+        # retrieve base & mandatory parameters
+        action = incoming_msg['action'] if 'action' in incoming_msg else None
+        identity = incoming_msg['identity'] if 'identity' in incoming_msg \
+                                            else None
+        message = incoming_msg['message'] if 'message' in incoming_msg \
+                                          else None
 
+        # request the list of messages sent to _identity_
         if action == "list":
 
             if identity in DEHttpHandler.msg_store \
                and DEHttpHandler.msg_store[identity]:
+
                 message = DEHttpHandler.msg_store[identity].pop(0)
-                json_msg = {'phone': identity, 'message': message.text, \
-                            'status': message.status}
+                json_msg = self.json_from_message(message)
                 self.respond_json(json.dumps(json_msg, indent=4))
+
             else:
                 self.respond_json({})
             return
@@ -111,29 +145,44 @@ class DEHttpHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # create message object
         msg = self.server.backend.message(identity, message, date=received)
 
+        # overload message object with parameters
+        existing = msg.__dict__
+        for (key, value) in incoming_msg.items():
+            if not key in existing:
+                try:
+                    msg.__getattribute__(key)
+                    continue
+                except:
+                    msg.__setattr__(key, value)
+
         # route the message
         self.server.backend.route(msg)
 
         # json response
-        json_msg = {'phone': identity, 'message': message}
+        json_msg = {'ack': True}
 
         self.respond_json(json.dumps(json_msg, indent=4))
         return
 
     @classmethod
     def outgoing(klass, msg):
-        '''Used to send outgoing messages through this interface.'''
+        ''' send message to backend client via HTTP
+
+        stores message in the backend instance and wait for polling. '''
 
         # store outgoing message in a dictionary.
         if not msg.connection.identity in DEHttpHandler.msg_store:
             DEHttpHandler.msg_store[msg.connection.identity] = []
-        msg.text = _str(msg.text)
         DEHttpHandler.msg_store[msg.connection.identity].append(msg)
 
 
 class Backend(rapidsms.backends.Backend):
 
     def configure(self, host="localhost", port=8080):
+        ''' changes HTTP server parameters
+
+        host: server host name
+        port: server port '''
 
         self.server = HttpServer((host, int(port)), DEHttpHandler)
         self.type = "dataentry"
