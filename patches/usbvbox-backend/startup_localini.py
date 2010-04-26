@@ -16,7 +16,7 @@
     # requires:
     #    - 'host' in /etc/hosts to host' IP
     #    - root's pubkey in chilcount@host ssh auth
-    /home/mvp/install/patchs/usbvbox-backend/startup_localini.py
+    /home/mvp/install/patches/usbvbox-backend/startup_localini.py
 
     logs as `usbvbox` on syslog daemon '''
 
