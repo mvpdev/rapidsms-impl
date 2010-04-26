@@ -33,14 +33,14 @@
     * install (optional boolean): whether or not to install app (setup.py)
     * patch (optional string): target repository (section name) and patch file
     separated by a comma. Example: pygsm, pygsm.patch
-    * patchs (optional string): list of patch-formated instructions (see above)
+    * patches (optional string): list of patch-formated instructions (see above)
     separated by a pipe.
-    Example: rapidsms, email-backend.patch | pygsm, patchs/pygsm-ussd.patch
+    Example: rapidsms, email-backend.patch | pygsm, patches/pygsm-ussd.patch
     * filecopy (optional string): repository (section name), file, destination
-    separated by commas. Example: rapidsms, patchs/new.py, lib/rapidsms
+    separated by commas. Example: rapidsms, patches/new.py, lib/rapidsms
     * filecopies (optional string): list of filecopy-formated instructions
     (see above) separated by a pipe.
-    Example: rapidsms, new.py, lib/rapidsms | pygsm, patchs/gsm.py, lib/gsm
+    Example: rapidsms, new.py, lib/rapidsms | pygsm, patches/gsm.py, lib/gsm
 
 ** Script usage
 
@@ -81,7 +81,7 @@ class Repository(object):
     tag = None
     install = False
     patch = None
-    patchs = None
+    patches = None
     filecopies = None
     patch_target = None
     fcopy = None
@@ -160,8 +160,8 @@ class GitCommander(object):
         # clone repositories
         self.clone_repos()
 
-        # apply patchs
-        self.apply_patchs()
+        # apply patches
+        self.apply_patches()
 
         # copy additions
         self.copy_additions()
@@ -264,7 +264,7 @@ class GitCommander(object):
                 folder = os.path.join(self.others_dir, rep.name)
                 GitCommander.install(folder)
 
-    def apply_patchs(self):
+    def apply_patches(self):
 
         for rep in self.others:
             if rep.patch and rep.patch_target:
@@ -276,9 +276,9 @@ class GitCommander(object):
                 rep_dir = os.path.join(self.others_dir, rep.name)
                 GitCommander.patch(folder, os.path.join(rep_dir, rep.patch))
 
-            if rep.patchs:
-                print " Applying multiple patchs (%s)" % rep.patchs.__len__()
-                for patch_target, patch in rep.patchs:
+            if rep.patches:
+                print " Applying multiple patches (%s)" % rep.patches.__len__()
+                for patch_target, patch in rep.patches:
                     target = self.repo_by_ident(patch_target)
                     if target == None:
                         print " Error with patch location."
@@ -492,15 +492,15 @@ class GitConfig(ConfigParser):
             fcopy_target = None
             fcopy_ftarget = None
 
-        # patchs is optional
+        # patches is optional
         try:
-            patchs = self.get(ident, 'patchs')
-            patchst = []
-            for tu in patchs.replace(' ', '').split('|'):
+            patches = self.get(ident, 'patches')
+            patchest = []
+            for tu in patches.replace(' ', '').split('|'):
                 x = tu.split(',')
-                patchst.append((x[0], x[1]))
+                patchest.append((x[0], x[1]))
         except:
-            patchst = None
+            patchest = None
 
         # filecopies is optional
         try:
@@ -525,7 +525,7 @@ class GitConfig(ConfigParser):
         repo.install = install
         repo.patch = patch
         repo.patch_target = patch_target
-        repo.patchs = patchst
+        repo.patches = patchest
         repo.fcopy = fcopy
         repo.fcopy_target = fcopy_target
         repo.fcopy_ftarget = fcopy_ftarget
@@ -562,6 +562,7 @@ def main():
         usage(sys.argv[0])
         sys.exit(2)
 
+    virtualenv = None
     for o, a in opts:
         print o, a
         if o in ("-h", "--help"):
@@ -576,11 +577,12 @@ def main():
             virtualenv = a
         else:
             assert False, "Unhandled option"
+        
     print config_file
 
     if not os.path.exists(config_file) \
        or not os.path.exists(target) \
-       or not os.path.exists(virtualenv):
+       or virtualenv and not os.path.exists(virtualenv):
         print "Error. File does not exist."
         sys.exit(1)
 
