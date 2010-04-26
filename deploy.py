@@ -134,8 +134,9 @@ class GitCommander(object):
     root = None
     others_dir_name = 'sources'
     others_dir = None
+    python_install_cmd = "sudo python"
 
-    def __init__(self, main=None, others=None):
+    def __init__(self, main=None, others=None, virtualenv=None):
 
         # Add main repository
         if main and isinstance(main, Repository):
@@ -146,6 +147,9 @@ class GitCommander(object):
                 self.others.append(other)
 
         self.root = os.getcwd()
+        if virtualenv:
+            GitCommander.python_install_cmd = os.path.join(virtualenv, "bin/python")
+
 
     def build(self):
         ''' launchs all build steps sequencialy '''
@@ -327,9 +331,11 @@ class GitCommander(object):
 
         print " Installing repository at %s" % folder
 
-        os.system("sudo python ./setup.py install")
+        os.system("%s ./setup.py install" % GitCommander.python_install_cmd)
 
         os.chdir(init_dir)
+           
+        
 
     @classmethod
     def patch(cls, folder, patch):
@@ -534,10 +540,11 @@ class GitConfig(ConfigParser):
 
 
 def usage(me):
-    print u"Usage:  %s [-c file, --config=file, -t path, --target=path] \n\n \
+    print u"Usage:  %s [-c file, --config=file, -t path, --target=path, -e env_path, ] \n\n \
 \
-    -c, --config=   Use provided configuration file \n \
-    -t, -target=    Use provided path as home for repositories \
+    -c, --config=       Use provided configuration file \n \
+    -t, -target=        Use provided path as home for repositories\n \
+    -e, --virtualenv=   Install required lib in the currently activated virtal env \
 " % me
 
 
@@ -545,26 +552,35 @@ def main():
 
     config_file = 'install.ini'
     target = os.getcwd()
+    virtual_env = None
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hc:t:", \
-                                                ["help", "config=", "target="])
+        opts, args = getopt.getopt(sys.argv[1:], 
+                                   "hc:t:e:", 
+                                   ["help", "config=", "target=", "virtualenv="])
     except getopt.GetoptError:
         usage(sys.argv[0])
         sys.exit(2)
 
     for o, a in opts:
+        print o, a
         if o in ("-h", "--help"):
             usage(sys.argv[0])
             sys.exit()
         elif o in ("-c", "--config"):
+            print o, a
             config_file = a
         elif o in ("-t", "--target"):
             target = a
+        elif o in ("-e", "--virualenv"):
+            virtualenv = a
         else:
             assert False, "Unhandled option"
+    print config_file
 
-    if not os.path.exists(config_file) or not os.path.exists(target):
+    if not os.path.exists(config_file) \
+       or not os.path.exists(target) \
+       or not os.path.exists(virtualenv):
         print "Error. File does not exist."
         sys.exit(1)
 
@@ -572,7 +588,7 @@ def main():
     config = GitConfig(config_file)
 
     # build folder and clones and everything
-    commander = GitCommander(main=config.main_repo, others=config.repos)
+    commander = GitCommander(main=config.main_repo, others=config.repos, virtualenv=virtualenv)
     commander.build()
 
 if __name__ == '__main__':
