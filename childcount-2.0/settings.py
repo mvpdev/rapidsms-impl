@@ -4,6 +4,6 @@
 
 from django.conf import settings
 
-INSTALLED_APPS.extend(['reversion'])
+INSTALLED_APPS.extend(['reversion', 'south'])
 
 settings.configure(**locals())
