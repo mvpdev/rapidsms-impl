@@ -28,7 +28,7 @@ LAST_DIR="latest"
 DUP="rsync://$REMOTE_USER@$REMOTE_HOST/$USB_ROOT"
 DUP_TARGET="$DUP/$INC_DIR"
 DUP_SD_TARGET="$DUP/$LAST_DIR"
-SQL_TARGET="/backup"
+SQL_TARGET="/var/lib/mysql/backup"
 SMS_PIPE="/tmp/childcount_pipe"
 DUP_LOG="$SQL_TARGET/duplicity.log"
 
