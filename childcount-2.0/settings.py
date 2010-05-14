@@ -4,6 +4,10 @@
 
 from django.conf import settings
 
-INSTALLED_APPS.extend(['reversion', 'south'])
+INSTALLED_APPS.extend([
+    'django.contrib.admin',
+    'reversion',
+    'south'
+])
 
 settings.configure(**locals())
