@@ -4,7 +4,7 @@
         "model": "locations.location", 
         "fields": {
             "code": "NG11", 
-            "name": "Kyanyakahimbi II", 
+            "name": "Omukitooma II", 
             "parent": 103, 
             "longitude": null, 
             "latitude": null, 
@@ -304,7 +304,7 @@
         "model": "locations.location", 
         "fields": {
             "code": "NG08", 
-            "name": "Kyanyakahimbi I", 
+            "name": "Omukitooma I", 
             "parent": 103, 
             "longitude": null, 
             "latitude": null, 
@@ -400,7 +400,7 @@
         "model": "locations.location", 
         "fields": {
             "code": "NG01", 
-            "name": "Kyanyakahimbi III", 
+            "name": "Omukitooma III", 
             "parent": 103, 
             "longitude": null, 
             "latitude": null, 
@@ -796,7 +796,7 @@
         "model": "locations.location", 
         "fields": {
             "code": "KG09", 
-            "name": "Kagabugu II", 
+            "name": "Kabugu II", 
             "parent": 100, 
             "longitude": null, 
             "latitude": null, 
