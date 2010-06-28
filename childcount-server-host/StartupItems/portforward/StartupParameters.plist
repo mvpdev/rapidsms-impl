@@ -1,0 +1,10 @@
+{
+Description = "port forwarding";
+Provides = ("portforward");
+Requires = ("Network");
+OrderPreference = "Late";
+Messages = {
+start = "Enabling port forwarding";
+stop = "Stopping port forwarding";
+};
+}
