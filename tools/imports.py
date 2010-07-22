@@ -107,3 +107,36 @@ def import_user(csv_file):
                                      last_seen=datetime.now())
             c.save()
 
+def import_locations(csv_file):
+
+    from locations.models import Location, LocationType
+
+    try:
+        fhandler = open(csv_file)
+    except IOError:
+        print "Unable to open file %s" % csv_file
+        return None
+
+    for line in fhandler:
+
+        data = line.strip().split(",")
+        name = data[0]
+        code = data[1]
+        type_id = data[4]
+        parent_id = data[6] or None
+
+        type_ = LocationType.objects.get(id=type_id)
+
+        if parent_id:
+            parent = Location.objects.get(id=parent_id)
+        else:
+            parent = None
+
+        print "N: %s - C: %s - T: %s (%s) - P: %s (%s)" % (name, code, type_id, type_, parent_id, parent)
+
+        location = Location()
+        location.type = type_
+        location.name = name
+        location.code = code
+        location.parent = parent
+        location.save()
