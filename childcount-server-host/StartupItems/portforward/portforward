@@ -1,0 +1,35 @@
+#!/bin/bash
+
+##
+# port forwarding script
+# starts natd with port forward
+# start ip forwarding
+# add natd rule to firewall
+##
+
+. /etc/rc.common
+
+StartService ()
+{
+    ConsoleMessage "setting-up port forwarding"
+    # call childcount vbox wrapper
+    /usr/sbin/natd -interface en0 -redirect_port tcp 10.93.86.242:80 80 -redirect_port udp 10.93.86.242:80 80 -redirect_port tcp 10.93.86.243:8080 8080 -redirect_port udp 10.93.86.243:8080 8080
+    sysctl -w net.inet.ip.forwarding=1
+    #ipfw add 10 divert natd ip from any to any via en0
+}
+
+StopService ()
+{
+    ConsoleMessage "removing port forward. Not killing natd. Do it yourself!"
+    ipfw delete 10
+    sysctl -w net.inet.ip.forwarding=0
+}
+
+RestartService ()
+{
+    StopService
+    StartService
+}
+
+RunService "$1"
+

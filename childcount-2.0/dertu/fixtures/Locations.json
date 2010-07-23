@@ -1,0 +1,1 @@
+[{"pk": 1, "model": "locations.location", "fields": {"code": "DE", "name": "Dertu", "parent": null, "longitude": null, "latitude": null, "type": 3}}, {"pk": 2, "model": "locations.location", "fields": {"code": "DE01", "name": "Dertu Dispensary", "parent": 1, "longitude": "39.798434", "latitude": "0.272628", "type": 1}}]

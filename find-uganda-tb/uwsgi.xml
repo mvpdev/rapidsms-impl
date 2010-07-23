@@ -1,0 +1,28 @@
+<uwsgi>
+    <home>/home/mvp/find_tb/sms/</home>
+
+    <pythonpath>/home/mvp/virtualenvs/find_tb/lib/python2.6/site-packages/</pythonpath>
+    <pythonpath>/home/mvp/virtualenvs/find_tb/lib/python2.6/site-packages/rapidsms-0.1-py2.6.egg</pythonpath>
+    <pythonpath>/home/mvp/virtualenvs/find_tb/lib/python2.6/site-packages/django_haystack-1.0.1_final-py2.6.egg</pythonpath>
+    <pythonpath>/home/mvp/virtualenvs/find_tb/lib/python2.6/site-packages/Whoosh-0.3.18-py2.6.egg</pythonpath>
+    <pythonpath>/home/mvp/virtualenvs/find_tb/lib/python2.6/site-packages/South-0.7.1-py2.6.egg</pythonpath>
+
+    <pythonpath>/usr/lib/python2.6/</pythonpath>
+    <pythonpath>/usr/lib/python2.6/dist-packages/</pythonpath>
+    <pythonpath>/usr/lib/python2.6/lib-dynload/</pythonpath>
+    <pythonpath>/usr/lib/pymodules/python2.6/</pythonpath>
+    <pythonpath>/usr/local/lib/pymodules/python2.6/</pythonpath>
+
+    <pythonpath>/home/mvp/find_tb/sms/</pythonpath>
+    <pythonpath>/home/mvp/find_tb/sms/apps</pythonpath>
+
+    <socket-timeout>20</socket-timeout>
+    <harakiri>20</harakiri>
+    <processes>5</processes>
+    <pidfile>/home/mvp/find_tb/uwsgi.pid</pidfile>
+    <master/>
+
+    <app mountpoint="/">
+        <script>django_wsgi</script>
+    </app>
+</uwsgi>

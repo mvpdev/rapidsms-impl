@@ -185,7 +185,7 @@ class Backend(rapidsms.backends.Backend):
         port: server port '''
 
         self.server = HttpServer((host, int(port)), DEHttpHandler)
-        self.type = "dataentry"
+        self.type = "debackend"
 
         # reference backend in HTTP server
         self.server.backend = self
