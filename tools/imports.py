@@ -33,6 +33,7 @@ def import_user(csv_file):
     from django.contrib.auth.models import User, UserManager, Group
     from reporters.models import PersistantConnection, PersistantBackend
     from locations.models import Location
+    from mgvmrs.models import User as OUser
 
     from childcount.models import Patient, CHW, Configuration, Clinic
     from childcount.utils import clean_names
@@ -48,14 +49,13 @@ def import_user(csv_file):
         data = line.strip().split(",")
         first_name = data[1]
         last_name = data[0]
-        password = u"ikaram"
+        password = u"childcount"
         language = 'en'
         location = data[2]
         mobile = data[3] or None
+        openmrs_id = data[4] or None
 
-        print "F: %s - L: %s - P: %s - L: %s - LC: %s - M: %s" % (first_name, last_name, password, language, location, mobile)
-
-        #continue
+        print "F: %s - L: %s - P: %s - L: %s - LC: %s - M: %s - O: %s" % (first_name, last_name, password, language, location, mobile, openmrs_id)
 
         # CHW creation
         chw = CHW()
@@ -87,7 +87,7 @@ def import_user(csv_file):
 
         # create dataentry connection
         c = PersistantConnection(backend=PersistantBackend.objects.get(\
-                                               slug__iexact='dataentry'), \
+                                               slug__iexact='debackend'), \
                                  identity=chw.username, \
                                  reporter=chw, \
                                  last_seen=datetime.now())
@@ -106,6 +106,13 @@ def import_user(csv_file):
                                      reporter=chw, \
                                      last_seen=datetime.now())
             c.save()
+
+        # add MGVMRS
+        if openmrs_id:
+            ouser = OUser()
+            ouser.chw = chw
+            ouser.openmrs_id = openmrs_id
+            ouser.save()
 
 def import_locations(csv_file):
 
