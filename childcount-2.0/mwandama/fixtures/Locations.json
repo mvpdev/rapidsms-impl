@@ -1,0 +1,1466 @@
+[
+    {
+        "pk": 305, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam01", 
+            "name": "Kutambala", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 304, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam", 
+            "name": "Nambande", 
+            "parent": null, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 3
+        }
+    }, 
+    {
+        "pk": 303, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mwa07", 
+            "name": "Nyozani", 
+            "parent": 296, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 302, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mwa06", 
+            "name": "Mwandama", 
+            "parent": 296, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 301, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mwa05", 
+            "name": "Matchado", 
+            "parent": 296, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 300, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mwa04", 
+            "name": "M'Beti ", 
+            "parent": 296, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 299, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mwa03", 
+            "name": "Kusamba", 
+            "parent": 296, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 297, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mwa01", 
+            "name": "Kamalo 1", 
+            "parent": 296, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 298, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mwa02", 
+            "name": "Kamalo 2", 
+            "parent": 296, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 296, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mwa", 
+            "name": "Mwandama", 
+            "parent": null, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 3
+        }
+    }, 
+    {
+        "pk": 216, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat09", 
+            "name": "Chindiwo", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 217, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat10", 
+            "name": "Chisuse", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 218, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat11", 
+            "name": "Issa", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 219, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat12", 
+            "name": "Kadewere", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 220, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat13", 
+            "name": "Kalimbuka 1", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 221, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat14", 
+            "name": "Kalimbuka 2", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 222, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat15", 
+            "name": "Kazembe", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 223, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat16", 
+            "name": "Lifa", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 224, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat17", 
+            "name": "Litisani ", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 225, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat18", 
+            "name": "Makanjira", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 226, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat19", 
+            "name": "Malemusi", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 227, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat20", 
+            "name": "Malire", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 228, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat21", 
+            "name": "Manyika", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 229, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat22", 
+            "name": "Mcherenga", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 230, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat23", 
+            "name": "Mchinjo ", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 231, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat24", 
+            "name": "Mdala Chikolongo", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 232, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat25", 
+            "name": "Mkamwa", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 233, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat26", 
+            "name": "Mkwinda", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 234, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat27", 
+            "name": "Mpakula", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 235, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat28", 
+            "name": "Mumbwa", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 236, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat29", 
+            "name": "Ngochela", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 237, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat30", 
+            "name": "Nkapungwa", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 238, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat31", 
+            "name": "Nkumugwa", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 239, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat32", 
+            "name": "Potani ", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 240, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat33", 
+            "name": "Selemani ", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 241, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat34", 
+            "name": "Tawakali ", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 242, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat35", 
+            "name": "Zizo 1", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 295, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw24", 
+            "name": "Yakiti", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 294, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw23", 
+            "name": "Winjile", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 293, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw22", 
+            "name": "Polozela", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 292, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw21", 
+            "name": "Ojesi", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 291, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw20", 
+            "name": "Nkopola", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 290, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw19", 
+            "name": "Nawani", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 289, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw18", 
+            "name": "Mwengo", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 288, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw17", 
+            "name": "Mwamadi", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 215, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat08", 
+            "name": "Chimpere", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 287, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw16", 
+            "name": "Mlonga", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 286, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw15", 
+            "name": "Mkwajama", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 285, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw14", 
+            "name": "Misomali", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 283, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw12", 
+            "name": "Matumbi", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 284, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw13", 
+            "name": "Mbeta", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 282, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw11", 
+            "name": "Mangeni ", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 281, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw10", 
+            "name": "Mainga", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 280, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw09", 
+            "name": "Magombo", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 214, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat07", 
+            "name": "Chimbamba", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 213, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat06", 
+            "name": "Chilaga", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 279, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw08", 
+            "name": "Kunsiya", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 278, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw07", 
+            "name": "Kapolo", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 277, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw06", 
+            "name": "Dule", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 276, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw05", 
+            "name": "Chiwalo", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 275, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw04", 
+            "name": "Chiunda", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 274, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw03", 
+            "name": "Chikolongo", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 273, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw02", 
+            "name": "Chikanguya", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 272, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw01", 
+            "name": "Bonomali", 
+            "parent": 271, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 271, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msw", 
+            "name": "Mswaswa", 
+            "parent": null, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 3
+        }
+    }, 
+    {
+        "pk": 270, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa17", 
+            "name": "Sitima 2", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 269, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa16", 
+            "name": "Sitima 1", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 268, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa15", 
+            "name": "Sanjika", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 267, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa14", 
+            "name": "Puna ", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 266, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa13", 
+            "name": "Nelson ", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 265, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa12", 
+            "name": "Ndolera", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 212, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat05", 
+            "name": "Chikonde 2", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 264, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa11", 
+            "name": "Mwamadi ", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 263, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa10", 
+            "name": "Mpita Estate", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 262, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa09", 
+            "name": "Mkwapatira", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 261, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa08", 
+            "name": "Mbamba", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 260, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa07", 
+            "name": "Mapanda", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 259, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa06", 
+            "name": "Majawa  ", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 258, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa05", 
+            "name": "Madeya", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 257, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa04", 
+            "name": "Kasenda", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 256, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa03", 
+            "name": "Hendele ", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 255, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa02", 
+            "name": "Chimimba", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 254, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa01", 
+            "name": "Chikwekwe ", 
+            "parent": 253, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 253, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "msa", 
+            "name": "Msamba", 
+            "parent": null, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 3
+        }
+    }, 
+    {
+        "pk": 252, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak09", 
+            "name": "Sitima Point", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 251, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak08", 
+            "name": "Mkwaila", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 250, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak07", 
+            "name": "Mambo", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 249, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak06", 
+            "name": "Lichenya", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 248, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak05", 
+            "name": "Katuli", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 247, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak04", 
+            "name": "Kamtande", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 211, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat04", 
+            "name": "Chikonde 1", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 246, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak03", 
+            "name": "Chilumpha", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 245, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak02", 
+            "name": "Botomani", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 244, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak01", 
+            "name": "Andersani", 
+            "parent": 243, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 243, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "mak", 
+            "name": "Makoka", 
+            "parent": null, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 3
+        }
+    }, 
+    {
+        "pk": 210, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat03", 
+            "name": "Beneti", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 209, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat02", 
+            "name": "Akulaga ", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 208, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat01", 
+            "name": "Adamu", 
+            "parent": 207, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 207, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "kat", 
+            "name": "Katete", 
+            "parent": null, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 3
+        }
+    }, 
+    {
+        "pk": 206, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din09", 
+            "name": "Yotamu", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 205, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din08", 
+            "name": "Mussa", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 204, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din07", 
+            "name": "Msanjama", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 203, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din06", 
+            "name": "Masauko", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 202, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din05", 
+            "name": "Macheche", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 201, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din04", 
+            "name": "John Kupeliwa", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 200, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din03", 
+            "name": "Jasteni", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 199, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din02", 
+            "name": "Elias", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 198, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din01", 
+            "name": "Bwanali", 
+            "parent": 197, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 197, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "din", 
+            "name": "Dindi", 
+            "parent": null, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 3
+        }
+    }, 
+    {
+        "pk": 306, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam02", 
+            "name": "Likole", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 307, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam03", 
+            "name": "Liundi", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 308, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam04", 
+            "name": "Majawa 1", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 309, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam05", 
+            "name": "Majawa 2", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 310, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam06", 
+            "name": "Malika", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 311, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam07", 
+            "name": "Maulidi", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 312, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam08", 
+            "name": "Mkawa", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 313, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam09", 
+            "name": "Moses", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 314, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam10", 
+            "name": "Msowa", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 315, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam11", 
+            "name": "Mtitha", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 316, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam12", 
+            "name": "Ntasa", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 317, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam13", 
+            "name": "Potani", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 318, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "nam14", 
+            "name": "Supedi", 
+            "parent": 304, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }
+]
