@@ -2,7 +2,14 @@
 # vim: ai ts=4 sts=4 et sw=4 coding=utf-8
 # maintainer: rgaudin
 
+
 def import_hid(hid_file):
+
+    ''' create Health ID objects from Text File
+
+    HHID must be on per line.
+    Also creates appropriate reversion objects. '''
+
     from datetime import datetime
 
     import reversion
@@ -25,7 +32,16 @@ def import_hid(hid_file):
         with reversion.revision:
             hid.save()
 
-def import_user(csv_file):
+
+def import_user(csv_file, full_name=False):
+
+    ''' create CHW objects from CSV file
+
+    FORMAT of CSV:
+    | Last Name | First Name | Location ID | OpenMRS ID
+
+    Alternatively, you can call function with full_name=True with:
+    | Full Name | Location ID | OpenMRS ID '''
 
     from datetime import date, timedelta, datetime
     import re
@@ -55,7 +71,9 @@ def import_user(csv_file):
         mobile = data[3] or None
         openmrs_id = data[4] or None
 
-        print "F: %s - L: %s - P: %s - L: %s - LC: %s - M: %s - O: %s" % (first_name, last_name, password, language, location, mobile, openmrs_id)
+        print "F: %s - L: %s - P: %s - L: %s - LC: %s - M: %s - O: %s" \
+              % (first_name, last_name, password, \
+                 language, location, mobile, openmrs_id)
 
         # CHW creation
         chw = CHW()
@@ -114,9 +132,24 @@ def import_user(csv_file):
             ouser.openmrs_id = openmrs_id
             ouser.save()
 
+
 def import_locations(csv_file):
 
+    ''' create Location and Clinic objects from CSV file
+
+    FORMAT of CSV:
+    | Name | Code | TYPE | PARENT
+
+    TYPES:
+    - V: Village
+    - Z: ZOne
+    - H: Health Unit
+
+    PARENT:
+    Parent must be ID of another location '''
+
     from locations.models import Location, LocationType
+    from childcount.models import Clinic
 
     try:
         fhandler = open(csv_file)
@@ -124,24 +157,32 @@ def import_locations(csv_file):
         print "Unable to open file %s" % csv_file
         return None
 
+    # maps character code to LocationType ID in fixtures
+    TYPES_MAP = {'V': 1, 'Z': 3, 'H': 2}
+
     for line in fhandler:
 
         data = line.strip().split(",")
-        name = data[0]
-        code = data[1]
-        type_id = data[4]
-        parent_id = data[6] or None
+        name = data[0].strip()
+        code = data[1].strip().lower()
+        type_code = data[2].strip()
+        parent_id = data[3].strip() or None
 
-        type_ = LocationType.objects.get(id=type_id)
+        type_ = LocationType.objects.get(id=TYPES_MAP[type_code])
 
         if parent_id:
             parent = Location.objects.get(id=parent_id)
         else:
             parent = None
 
-        print "N: %s - C: %s - T: %s (%s) - P: %s (%s)" % (name, code, type_id, type_, parent_id, parent)
+        print "N: %s - C: %s - T: %s (%s) - P: %s (%s)" \
+              % (name, code, type_code, type_, parent_id, parent)
 
-        location = Location()
+        # Create Clinic object if Health Unit
+        if type_.id in (2,):
+            location = Clinic()
+        else:
+            location = Location()
         location.type = type_
         location.name = name
         location.code = code
