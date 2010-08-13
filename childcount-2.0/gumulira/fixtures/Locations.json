@@ -1,0 +1,170 @@
+[
+    {
+        "pk": 1, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "gum", 
+            "name": "Gumulira", 
+            "parent": null, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 3
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "01", 
+            "name": "Chokumbila", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "02", 
+            "name": "Chombwe", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "04", 
+            "name": "Kambalame", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "05", 
+            "name": "Kamera", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "06", 
+            "name": "Kumagawa", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "07", 
+            "name": "Mbwelerabasikolo", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "08", 
+            "name": "Mbwelerachiwoza", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "09", 
+            "name": "Mgulura", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "10", 
+            "name": "Mologeni", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "11", 
+            "name": "Ntanga", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "12", 
+            "name": "Samson", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "13", 
+            "name": "Solomoni", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "locations.location", 
+        "fields": {
+            "code": "03", 
+            "name": "Gumulira", 
+            "parent": 1, 
+            "longitude": null, 
+            "latitude": null, 
+            "type": 1
+        }
+    }
+]
