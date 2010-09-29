@@ -65,7 +65,7 @@ def import_user(csv_file, language='en', password=u"childcount"):
         password = password
         language = language
         location = data[2]
-        mobile = data[3] or None
+        mobile = data[3].replace('"', '') or None
         openmrs_id = data[4] or None
 
         print "F: %s - L: %s - P: %s - L: %s - LC: %s - M: %s - O: %s" \
