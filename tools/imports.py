@@ -33,15 +33,12 @@ def import_hid(hid_file):
             hid.save()
 
 
-def import_user(csv_file, full_name=False):
+def import_user(csv_file, language='en', password=u"childcount"):
 
     ''' create CHW objects from CSV file
 
     FORMAT of CSV:
-    | Last Name | First Name | Location ID | OpenMRS ID
-
-    Alternatively, you can call function with full_name=True with:
-    | Full Name | Location ID | OpenMRS ID '''
+    | Last Name | First Name | Location ID | mobile | OpenMRS ID '''
 
     from datetime import date, timedelta, datetime
     import re
@@ -65,10 +62,10 @@ def import_user(csv_file, full_name=False):
         data = line.strip().split(",")
         first_name = data[1]
         last_name = data[0]
-        password = u"childcount"
-        language = 'en'
+        password = password
+        language = language
         location = data[2]
-        mobile = data[3] or None
+        mobile = data[3].replace('"', '') or None
         openmrs_id = data[4] or None
 
         print "F: %s - L: %s - P: %s - L: %s - LC: %s - M: %s - O: %s" \
@@ -164,11 +161,17 @@ def import_locations(csv_file):
 
         data = line.strip().split(",")
         name = data[0].strip()
-        code = data[1].strip().lower()
+        code = data[1].strip().lower() or None
         type_code = data[2].strip()
         parent_id = data[3].strip() or None
 
         type_ = LocationType.objects.get(id=TYPES_MAP[type_code])
+
+        # generate code once None
+        if not code:
+            code = u"%(type)s_%(location)s" \
+                   % {'type': type_.name.lower().replace(' ', '_'), \
+                      'location': name.lower().replace(' ', '_')}
 
         if parent_id:
             parent = Location.objects.get(id=parent_id)

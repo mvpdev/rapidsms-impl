@@ -25,6 +25,7 @@
     <pythonpath>/usr/local/lib/python2.6/dist-packages/rapidsms/lib/rapidsms/webui</pythonpath>
     <pythonpath>/home/mvp/sms</pythonpath>
     <pythonpath>/home/mvp/sms/apps</pythonpath>
+    <pythonpath>/home/mvp/sms/lib</pythonpath>
     <app mountpoint="/">
         <script>django_wsgi</script>
     </app>
