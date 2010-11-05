@@ -62,6 +62,11 @@ def import_user(csv_file, language='en', password=u"childcount"):
         data = line.strip().split(",")
         first_name = data[1]
         last_name = data[0]
+        try:
+            first_name = data[1].decode('utf-8')
+            last_name = data[0].decode('utf-8')
+        except:
+            raise
         password = password
         language = language
         location = data[2]
