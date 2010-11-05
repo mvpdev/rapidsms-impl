@@ -10,4 +10,6 @@ INSTALLED_APPS.extend([
     'south'
 ])
 
+BASE_TEMPLATE = 'childcount/base.html'
+
 settings.configure(**locals())
