@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 # maintainer: rgaudin
 
+# URL
+URL = "http://%s:%s" % ('localhost', '1338')
+# stores last date from CSV.
+last_date = None
+
 class FormA(object):
 
     def __init__(self, text=None):
@@ -106,15 +111,28 @@ class ToyaFormA(FormA):
 
     def post_process(self):
 
-        self.add_date_year()
+        self.date_get_last()
+        self.date_add_0month()
+        self.date_add_year()
         self.convert_date()
         self.same_hohh()
         self.dob_add_unit()
         self.dob_5digits()
+        self.dob_year_only()
         self.mob_spaces()
         self.mob_prefix_mali()
 
-    def add_date_year(self):
+    def date_get_last(self):
+        """ if date missing, use LAST_DATE """
+        if not self.date:
+            self.date = last_date
+
+    def date_add_0month(self):
+        """ replace date dmm to ddmm """
+        if self.date.__len__() == 3:
+            self.date = '0%s' % self.date
+
+    def date_add_year(self):
         """ Add 4-digit year at end of date """
         if self.date.__len__() == 4:
             self.date = '%s%s' % (self.date, '2010')
@@ -135,7 +153,7 @@ class ToyaFormA(FormA):
 
     def dob_add_unit(self):
         """ add `a` at end of DOB """
-        if self.dob.__len__() <= 3:
+        if self.dob.__len__() <= 3 and self.dob.isdigit():
             self.dob = '%s%s' % (self.dob, 'a')
 
     def mob_spaces(self):
@@ -146,7 +164,10 @@ class ToyaFormA(FormA):
         if self.mobile:
             self.mobile = '223%s' % self.mobile
 
-URL = "http://%s:%s" % ('localhost', '1338')
+    def dob_year_only(self):
+        """ converts DOB YYYY to 0101YYYY """
+        if self.date.__len__() == 4:
+            self.date = '0101%s' % self.date
 
 def http_request(url, data):
 
@@ -187,17 +208,23 @@ def import_csv(csv_file, handler=None):
         FormClass = FormA
 
     try:
+        common_fname = csv_file.split('.csv')[0]
         fhandler = open(csv_file)
-    except IOError:
-        print "Unable to open file %s" % csv_file
+        ehandler = open('%s_error.csv' % common_fname, 'w')
+        shandler = open('%s_success.csv' % common_fname, 'w')
+    except IOError, e:
+        print "Unable to open file: %s" % e
         return None
 
     linecptr = 0
     for line in fhandler:
+
+        line = line.decode('utf-8')
+
         linecptr += 1
 
         # debug
-        if linecptr > 100:
+        if linecptr > 10000:
             return
 
         # instanciate form
@@ -205,7 +232,11 @@ def import_csv(csv_file, handler=None):
 
         sms_text = form.to_sms()
         print ">>> %s" % sms_text
-        response, status = send_sms(sms_text, 'mtoure', form.date)
+        response, status = send_sms(sms_text.encode('utf-8'), 'mtoure', form.date)
+
+        # set date
+        global last_date
+        last_date = form.date
 
         # mark as success if only +BIR failed due to overaged patient
         if status == 'warning' \
@@ -213,8 +244,22 @@ def import_csv(csv_file, handler=None):
            and response.count(u"Vous ne pouvez pas soumettre un compte-rendu de naissance pour les patients de plus de 28 jours., +NEW Traité avec succès"):
             status = 'success'
 
+        mline = '"%s",%s' % (response, line)
+        mline = mline.encode('utf-8')
+
         if status == 'success':
             print "<<< SUCCESS"
+
+            # write log to success file
+            shandler.write(mline)
+
         else:
             print "<<< (%s) %s" % (status, response)
+
+            # write log to error file
+            ehandler.write(mline)
+
+    fhandler.close()
+    ehandler.close()
+    shandler.close()
         
