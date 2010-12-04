@@ -35,6 +35,9 @@
     <pythonpath>/usr/local/lib/python2.6/dist-packages/django_picklefield-0.1.9-py2.6.egg</pythonpath>
     <pythonpath>/usr/local/lib/python2.6/dist-packages/South-0.7-py2.6.egg</pythonpath>
     <pythonpath>/usr/local/lib/python2.6/dist-packages/South-0.7.1-py2.6.egg</pythonpath>
+    <pythonpath>/usr/local/lib/python2.6/dist-packages/anyjson-0.3-py2.6.egg</pythonpath>
+    <pythonpath>/usr/local/lib/python2.6/dist-packages/celery-2.1.4-py2.6.egg</pythonpath>
+    <pythonpath>/usr/local/lib/python2.6/dist-packages/django_celery-2.1.4-py2.6.egg</pythonpath>
     <pythonpath>/home/mvp/sms</pythonpath>
     <pythonpath>/home/mvp/sms/apps</pythonpath>
     <pythonpath>/home/mvp/sms/lib</pythonpath>
