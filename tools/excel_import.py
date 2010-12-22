@@ -10,6 +10,36 @@ URL = "http://%s:%s" % ('localhost', '1338')
 # stores last date from CSV.
 last_date = None
 
+TOYA_CHW_MAP = {
+            1: 3,
+            2: 2,
+            3: 10,
+            4: 5,
+            5: 6,
+            6: 7,
+            7: 13,
+            8: 8,
+            9: 9,
+            10: 4,
+            11: 11,
+            12: 12,
+        }
+
+def set_date(new_date):
+    """ store new value (from form) into global variable """
+    global last_date
+    data = new_date.split('-')
+    nd = "%s%s%s" % (data[2], data[1], data[0])
+    last_date = nd
+    return last_date
+
+
+def get_date():
+    """ retrieve global variable last_date """
+    global last_date
+    return last_date
+    
+
 def http_request(url, data):
     """ Sends POST call to URL with DATA and return result """
     import urllib
@@ -54,6 +84,8 @@ class FormA(object):
     def __init__(self, text=None):
 
         self.map = {}
+
+        self.chw_id = None
      
         self.date = None
 
@@ -139,8 +171,8 @@ class ToyaFormA(FormA):
             1: 'health_id',
             2: None, # +NEW
             3: 'location_code',
-            4: 'first_name',
-            5: 'last_name',
+            4: 'last_name',
+            5: 'first_name',
             6: 'gender',
             7: 'dob',
             8: 'hohh',
@@ -148,12 +180,14 @@ class ToyaFormA(FormA):
             10: None, #+BIR
             11: 'delivery',
             12: 'weight',
-            13: None, #+MOB
+            13: None, # +MOB
             14: 'mobile',
+            15: 'chw_id',
         }
 
     def post_process(self):
 
+        self.map_chw_id()
         self.date_get_last()
         self.date_add_0month()
         self.date_add_year()
@@ -165,10 +199,15 @@ class ToyaFormA(FormA):
         self.mob_spaces()
         self.mob_prefix_mali()
 
+    def map_chw_id(self):
+        """ convert Toya Team CHW ID to CC+ ID """
+        if self.chw_id:
+            self.chw_id = TOYA_CHW_MAP[int(self.chw_id)].__str__()
+
     def date_get_last(self):
         """ if date missing, use LAST_DATE """
         if not self.date:
-            self.date = last_date
+            self.date = get_date()
 
     def date_add_0month(self):
         """ replace date dmm to ddmm """
@@ -205,7 +244,7 @@ class ToyaFormA(FormA):
 
     def mob_prefix_mali(self):
         if self.mobile:
-            self.mobile = '223%s' % self.mobile
+            self.mobile = '223%s' % self.mobile.strip().replace(' ','')
 
     def dob_year_only(self):
         """ converts DOB YYYY to 0101YYYY """
@@ -338,7 +377,7 @@ class ToyaFormB(FormB):
     def date_get_last(self):
         """ if date missing, use LAST_DATE """
         if not self.date:
-            self.date = last_date
+            self.date = get_date()
 
     def date_add_0month(self):
         """ replace date dmm to ddmm """
@@ -421,19 +460,8 @@ class ToyaFormB(FormB):
 
     def map_chw_id(self):
         """ convert Toya Team CHW ID to CC+ ID """
-        chw_map = {
-            1: 3,
-            2: 4,
-            3: 5,
-            4: 6,
-            5: 7,
-            6: 8,
-            7: 9,
-            8: 10,
-            9: 11,            
-        }
 
-        self.chw_id = chw_map[int(self.chw_id)].__str__()
+        self.chw_id = TOYA_CHW_MAP[int(self.chw_id)].__str__()
 
     def post_process(self):
 
@@ -607,7 +635,7 @@ class ToyaFormC(FormC):
     def date_get_last(self):
         """ if date missing, use LAST_DATE """
         if not self.date:
-            self.date = last_date
+            self.date = get_date()
 
     def date_add_0month(self):
         """ replace date dmm to ddmm """
@@ -641,19 +669,8 @@ class ToyaFormC(FormC):
 
     def map_chw_id(self):
         """ convert Toya Team CHW ID to CC+ ID """
-        chw_map = {
-            1: 3,
-            2: 4,
-            3: 5,
-            4: 6,
-            5: 7,
-            6: 8,
-            7: 9,
-            8: 10,
-            9: 11,            
-        }
 
-        self.chw_id = chw_map[int(self.chw_id)].__str__()
+        self.chw_id = TOYA_CHW_MAP[int(self.chw_id)].__str__()
 
     def post_process(self):
 
@@ -699,7 +716,7 @@ def import_csv(csv_file, form, handler, username, chw_id):
         # instanciate form
         form = FormClass(line)
 
-        if form.chw_id:
+        if hasattr(form, 'chw_id') and form.chw_id:
             chw_id = form.chw_id
 
         sms_text = form.to_sms()
@@ -708,9 +725,8 @@ def import_csv(csv_file, form, handler, username, chw_id):
                                     identity=username, date=form.date, \
                                     chw_id=chw_id)
 
-        # set date
-        global last_date
-        last_date = form.date
+        # set last_date variable
+        set_date(form.date)
 
         # mark as success if only +BIR failed due to overaged patient
         if status == 'warning' \
