@@ -2,6 +2,14 @@
 # -*- coding: utf-8 -*-
 # maintainer: rgaudin
 
+import re
+
+try:
+    from childcount.models import HealthId
+except ImportError as e:
+    print e
+
+
 DEBUG=False
 
 # URL
@@ -9,6 +17,9 @@ URL = "http://%s:%s" % ('localhost', '1338')
 
 # stores last date from CSV.
 last_date = None
+
+# stores data from previous row
+last_data = {}
 
 TOYA_CHW_MAP = {
             1: 3,
@@ -25,12 +36,47 @@ TOYA_CHW_MAP = {
             12: 12,
         }
 
+def data_reset():
+    """ remove all values in last_data """
+    global last_data
+    last_data = {}
+
+def data_change(field, value):
+    """ update value for field on last_data """
+    global last_data
+    last_data[field] = value
+
+def data_update(all_values):
+    """ replace last_data with passed dictionnary """
+    if not all_values.__class__ == dict:
+        raise ValueError(u"must be a %s" % dict)
+    global last_data
+    last_data = all_values
+
+def data_get(field):
+    """ return value in last_data for requested field """
+    global last_data
+    try:
+        return last_data[field]
+    except IndexError:
+        return None
+
+def data_all():
+    """ return the whole last_data container """
+    global last_data
+    return last_data
+
 def set_date(new_date):
     """ store new value (from form) into global variable """
     global last_date
-    data = new_date.split('-')
-    nd = "%s%s%s" % (data[2], data[1], data[0])
-    last_date = nd
+    if re.match(r'\d{4}\-\d{2}\-\d{2}', new_date):
+        data = new_date.split('-')
+        nd = "%s%s%s" % (data[0], data[1], data[2])
+        last_date = nd
+    else:
+        data = new_date.split('-')
+        nd = "%s%s%s" % (data[2], data[1], data[0])
+        last_date = nd
     return last_date
 
 
@@ -131,7 +177,7 @@ class FormA(object):
         }
 
     def post_process(self):
-        pass
+        self.clean_mobile()
 
     def has_bir(self):
         return self.mother_hid + self.delivery
@@ -146,7 +192,11 @@ class FormA(object):
                 setattr(self, field, data[index].strip())
             except (IndexError, TypeError):
                 # not in map
-                pass 
+                pass
+
+    def clean_mobile(self):
+        if self.mobile:
+            self.mobile = re.sub(r'\D*', '', self.mobile.strip())
 
     def to_sms(self):
         new = {'hid': self.health_id, 'loc': self.location_code, \
@@ -160,96 +210,6 @@ class FormA(object):
         if self.has_mob():
             sms += u" +MOB %(mob)s" % {'mob': self.mobile}
         return sms
-
-class ToyaFormA(FormA):
-    """ Toya specificities on FormA """
-
-    def init_map(self):
-
-        self.map = {
-            0: 'date',
-            1: 'health_id',
-            2: None, # +NEW
-            3: 'location_code',
-            4: 'last_name',
-            5: 'first_name',
-            6: 'gender',
-            7: 'dob',
-            8: 'hohh',
-            9: 'mother_hid',
-            10: None, #+BIR
-            11: 'delivery',
-            12: 'weight',
-            13: None, # +MOB
-            14: 'mobile',
-            15: 'chw_id',
-        }
-
-    def post_process(self):
-
-        self.map_chw_id()
-        self.date_get_last()
-        self.date_add_0month()
-        self.date_add_year()
-        self.convert_date()
-        self.same_hohh()
-        self.dob_add_unit()
-        self.dob_5digits()
-        self.dob_year_only()
-        self.mob_spaces()
-        self.mob_prefix_mali()
-
-    def map_chw_id(self):
-        """ convert Toya Team CHW ID to CC+ ID """
-        if self.chw_id:
-            self.chw_id = TOYA_CHW_MAP[int(self.chw_id)].__str__()
-
-    def date_get_last(self):
-        """ if date missing, use LAST_DATE """
-        if not self.date:
-            self.date = get_date()
-
-    def date_add_0month(self):
-        """ replace date dmm to ddmm """
-        if self.date.__len__() == 3:
-            self.date = '0%s' % self.date
-
-    def date_add_year(self):
-        """ Add 4-digit year at end of date """
-        if self.date.__len__() == 4:
-            self.date = '%s%s' % (self.date, '2010')
-
-    def convert_date(self):
-        """ convert date from ddmmYYYY to YYYY-mm-dd """
-        self.date = '%s-%s-%s' % (self.date[4:8], self.date[2:4], self.date[0:2])
-
-    def same_hohh(self):
-        """ replace HoHH ID with H if same as HID """
-        if self.health_id == self.hohh:
-            self.hohh = 'H'
-
-    def dob_5digits(self):
-        """ replace DOB dmmYY with ddmmYY """
-        if self.dob.__len__() == 5:
-            self.dob = self.dob.zfill(6)
-
-    def dob_add_unit(self):
-        """ add `a` at end of DOB """
-        if self.dob.__len__() <= 3 and self.dob.isdigit():
-            self.dob = '%s%s' % (self.dob, 'a')
-
-    def mob_spaces(self):
-        if self.mobile:
-            self.mobile = self.mobile.replace(' ', '')
-
-    def mob_prefix_mali(self):
-        if self.mobile:
-            self.mobile = '223%s' % self.mobile.strip().replace(' ','')
-
-    def dob_year_only(self):
-        """ converts DOB YYYY to 0101YYYY """
-        if self.date.__len__() == 4:
-            self.date = '0101%s' % self.date
 
 class FormB(object):
     """ ChildCount+ B Form for HouseHold Visits """
@@ -349,141 +309,6 @@ class FormB(object):
                  'methods': self.fp_methods}
             sms += u" +K %(women)s %(women_fp)s %(methods)s" % k
         return sms
-
-class ToyaFormB(FormB):
-    """ Toya specificities on FormB """
-
-    def init_map(self):
-
-        self.map = {
-            0: 'chw_id',
-            1: 'date',
-            2: 'health_id',
-            3: None, # +V
-            4: 'hh_member_avail',
-            5: 'under_5',
-            6: 'advices',
-            7: None, # +E
-            8: 'sick_members',
-            9: 'sick_rdt',
-            10: 'sick_rdtpos',
-            11: 'sick_malarial',
-            12: None, #+K
-            13: 'women',
-            14: 'women_fp',
-            15: 'fp_methods',
-        }
-
-    def date_get_last(self):
-        """ if date missing, use LAST_DATE """
-        if not self.date:
-            self.date = get_date()
-
-    def date_add_0month(self):
-        """ replace date dmm to ddmm """
-        if self.date.__len__() == 3:
-            self.date = '0%s' % self.date
-
-    def date_add_year(self):
-        """ Add 4-digit year at end of date """
-        if self.date.__len__() == 4:
-            self.date = '%s%s' % (self.date, '2010')
-
-    def convert_date(self):
-        """ convert date from ddmmYYYY to YYYY-mm-dd """
-        self.date = '%s-%s-%s' % (self.date[4:8], self.date[2:4], \
-                                  self.date[0:2])
-
-    def zero2o_hh_avail(self):
-        """ replace 0 (zero) to O in HH member available field """
-        if self.hh_member_avail.lower() == '0':
-            self.hh_member_avail = 'o'
-
-    def k_default_value(self):
-        """ consider non-filled #of women using FPM 0 if blank """
-        if self.women and not self.women_fp:
-            self.women_fp = '0'
-
-    def v_default_value(self):
-        """ consider non-filled #of under5 0 if blank """
-        if self.hh_member_avail.lower() in ('o','y') and not self.under_5:
-            self.under_5 = '0'
-
-    def e_default_value(self):
-        """ consider non-filled +E 0 if blank """
-        if self.sick_members:
-            if not self.sick_rdt:
-                self.sick_rdt = '0'
-            if not self.sick_rdtpos:
-                self.sick_rdtpos = '0'
-            if not self.sick_malarial:
-                self.sick_malarial = '0'
-
-    def e_niszero(self):
-        """ replace N by 0 on +E """
-        if self.sick_members and self.sick_members.lower() == 'n':
-            self.sick_members = '0'
-        if self.sick_rdt and self.sick_rdt.lower() == 'n':
-            self.sick_rdt = '0'
-        if self.sick_rdtpos and self.sick_rdtpos.lower() == 'n':
-            self.sick_rdtpos = '0'
-        if self.sick_malarial and self.sick_malarial.lower() == 'n':
-            self.sick_malarial = '0'
-
-    def k_niszero(self):
-        """ replace N by 0 on +K """
-        if self.women and self.women.lower() == 'n':
-            self.women = '0'
-        if self.women_fp and self.women_fp.lower() == 'n':
-            self.women_fp = '0'
-        if self.fp_methods and self.fp_methods.lower() == 'n':
-            self.fp_methods = None
-
-    def fp_multi_methods(self):
-        """ copy FP methods by number of women """
-        if not self.has_k():
-            return
-
-        try:
-            if int(self.women_fp) > 1 \
-            and self.fp_methods.strip().split(' ').__len__() == 1:
-                meth = self.fp_methods.strip()
-                meths = [meth for i in range(0, int(self.women_fp))]
-                self.fp_methods = ' '.join(meths)
-        except:
-            pass
-
-    def adv_codes(self):
-        """ convert +V advices codes to correct ones """
-        if self.advices:
-            self.advices = self.advices.upper().replace('PL', 'PF')
-
-    def map_chw_id(self):
-        """ convert Toya Team CHW ID to CC+ ID """
-
-        self.chw_id = TOYA_CHW_MAP[int(self.chw_id)].__str__()
-
-    def post_process(self):
-
-        self.map_chw_id()
-
-        self.date_get_last()
-        self.date_add_0month()
-        self.date_add_year()
-        self.convert_date()
-
-        self.zero2o_hh_avail()
-
-        self.e_niszero()
-        self.k_niszero()
-
-        self.k_default_value()
-        self.v_default_value()
-        self.e_default_value()
-
-        self.fp_multi_methods()
-        #self.fp_codes()
-        self.adv_codes()
 
 class FormC(object):
     """ ChildCount+ C Form for Individual Visits """
@@ -629,6 +454,233 @@ class FormC(object):
             sms += u" +R %(ref)s" % r
         return sms
 
+# TOYA
+class ToyaFormA(FormA):
+    """ Toya specificities on FormA """
+
+    def init_map(self):
+
+        self.map = {
+            0: 'date',
+            1: 'health_id',
+            2: None, # +NEW
+            3: 'location_code',
+            4: 'last_name',
+            5: 'first_name',
+            6: 'gender',
+            7: 'dob',
+            8: 'hohh',
+            9: 'mother_hid',
+            10: None, #+BIR
+            11: 'delivery',
+            12: 'weight',
+            13: None, # +MOB
+            14: 'mobile',
+            15: 'chw_id',
+        }
+
+    def post_process(self):
+
+        self.map_chw_id()
+        self.date_get_last()
+        self.date_add_0month()
+        self.date_add_year()
+        self.convert_date()
+        self.same_hohh()
+        self.dob_add_unit()
+        self.dob_5digits()
+        self.dob_year_only()
+        self.clean_mobile()
+        self.mob_spaces()
+        self.mob_prefix_mali()
+
+    def map_chw_id(self):
+        """ convert Toya Team CHW ID to CC+ ID """
+        if self.chw_id:
+            self.chw_id = TOYA_CHW_MAP[int(self.chw_id)].__str__()
+
+    def date_get_last(self):
+        """ if date missing, use LAST_DATE """
+        if not self.date:
+            self.date = get_date()
+
+    def date_add_0month(self):
+        """ replace date dmm to ddmm """
+        if self.date.__len__() == 3:
+            self.date = '0%s' % self.date
+
+    def date_add_year(self):
+        """ Add 4-digit year at end of date """
+        if self.date.__len__() == 4:
+            self.date = '%s%s' % (self.date, '2010')
+
+    def convert_date(self):
+        """ convert date from ddmmYYYY to YYYY-mm-dd """
+        self.date = '%s-%s-%s' % (self.date[4:8], self.date[2:4], self.date[0:2])
+
+    def same_hohh(self):
+        """ replace HoHH ID with H if same as HID """
+        if self.health_id == self.hohh:
+            self.hohh = 'H'
+
+    def dob_5digits(self):
+        """ replace DOB dmmYY with ddmmYY """
+        if self.dob.__len__() == 5:
+            self.dob = self.dob.zfill(6)
+
+    def dob_add_unit(self):
+        """ add `a` at end of DOB """
+        if self.dob.__len__() <= 3 and self.dob.isdigit():
+            self.dob = '%s%s' % (self.dob, 'a')
+
+    def mob_spaces(self):
+        if self.mobile:
+            self.mobile = self.mobile.replace(' ', '')
+
+    def mob_prefix_mali(self):
+        if self.mobile:
+            self.mobile = '223%s' % self.mobile.strip().replace(' ','')
+
+    def dob_year_only(self):
+        """ converts DOB YYYY to 0101YYYY """
+        if self.date.__len__() == 4:
+            self.date = '0101%s' % self.date
+
+class ToyaFormB(FormB):
+    """ Toya specificities on FormB """
+
+    def init_map(self):
+
+        self.map = {
+            0: 'chw_id',
+            1: 'date',
+            2: 'health_id',
+            3: None, # +V
+            4: 'hh_member_avail',
+            5: 'under_5',
+            6: 'advices',
+            7: None, # +E
+            8: 'sick_members',
+            9: 'sick_rdt',
+            10: 'sick_rdtpos',
+            11: 'sick_malarial',
+            12: None, #+K
+            13: 'women',
+            14: 'women_fp',
+            15: 'fp_methods',
+        }
+
+    def date_get_last(self):
+        """ if date missing, use LAST_DATE """
+        if not self.date:
+            self.date = get_date()
+
+    def date_add_0month(self):
+        """ replace date dmm to ddmm """
+        if self.date.__len__() == 3:
+            self.date = '0%s' % self.date
+
+    def date_add_year(self):
+        """ Add 4-digit year at end of date """
+        if self.date.__len__() == 4:
+            self.date = '%s%s' % (self.date, '2010')
+
+    def convert_date(self):
+        """ convert date from ddmmYYYY to YYYY-mm-dd """
+        self.date = '%s-%s-%s' % (self.date[4:8], self.date[2:4], \
+                                  self.date[0:2])
+
+    def zero2o_hh_avail(self):
+        """ replace 0 (zero) to O in HH member available field """
+        if self.hh_member_avail.lower() == '0':
+            self.hh_member_avail = 'o'
+
+    def k_default_value(self):
+        """ consider non-filled #of women using FPM 0 if blank """
+        if self.women and not self.women_fp:
+            self.women_fp = '0'
+
+    def v_default_value(self):
+        """ consider non-filled #of under5 0 if blank """
+        if self.hh_member_avail.lower() in ('o','y') and not self.under_5:
+            self.under_5 = '0'
+
+    def e_default_value(self):
+        """ consider non-filled +E 0 if blank """
+        if self.sick_members:
+            if not self.sick_rdt:
+                self.sick_rdt = '0'
+            if not self.sick_rdtpos:
+                self.sick_rdtpos = '0'
+            if not self.sick_malarial:
+                self.sick_malarial = '0'
+
+    def e_niszero(self):
+        """ replace N by 0 on +E """
+        if self.sick_members and self.sick_members.lower() == 'n':
+            self.sick_members = '0'
+        if self.sick_rdt and self.sick_rdt.lower() == 'n':
+            self.sick_rdt = '0'
+        if self.sick_rdtpos and self.sick_rdtpos.lower() == 'n':
+            self.sick_rdtpos = '0'
+        if self.sick_malarial and self.sick_malarial.lower() == 'n':
+            self.sick_malarial = '0'
+
+    def k_niszero(self):
+        """ replace N by 0 on +K """
+        if self.women and self.women.lower() == 'n':
+            self.women = '0'
+        if self.women_fp and self.women_fp.lower() == 'n':
+            self.women_fp = '0'
+        if self.fp_methods and self.fp_methods.lower() == 'n':
+            self.fp_methods = None
+
+    def fp_multi_methods(self):
+        """ copy FP methods by number of women """
+        if not self.has_k():
+            return
+
+        try:
+            if int(self.women_fp) > 1 \
+            and self.fp_methods.strip().split(' ').__len__() == 1:
+                meth = self.fp_methods.strip()
+                meths = [meth for i in range(0, int(self.women_fp))]
+                self.fp_methods = ' '.join(meths)
+        except:
+            pass
+
+    def adv_codes(self):
+        """ convert +V advices codes to correct ones """
+        if self.advices:
+            self.advices = self.advices.upper().replace('PL', 'PF')
+
+    def map_chw_id(self):
+        """ convert Toya Team CHW ID to CC+ ID """
+
+        self.chw_id = TOYA_CHW_MAP[int(self.chw_id)].__str__()
+
+    def post_process(self):
+
+        self.map_chw_id()
+
+        self.date_get_last()
+        self.date_add_0month()
+        self.date_add_year()
+        self.convert_date()
+
+        self.zero2o_hh_avail()
+
+        self.e_niszero()
+        self.k_niszero()
+
+        self.k_default_value()
+        self.v_default_value()
+        self.e_default_value()
+
+        self.fp_multi_methods()
+        #self.fp_codes()
+        self.adv_codes()
+
 class ToyaFormC(FormC):
     """ Toya specificities on FormC """
 
@@ -684,6 +736,118 @@ class ToyaFormC(FormC):
         self.danger_sign_flag()
         self.g_zerofornone()
         self.r_zerofornone()
+
+# KORARO
+class KoraroFormA(FormA):
+    """ Koraro specificities on FormA """
+
+    MOTHER = 0
+    FATHER = 1
+    CHILD = 2
+
+    def init_map(self):
+
+        self.person_type = self.CHILD
+
+        self.map = {
+            0: 'hh_number',
+            1: 'date',
+            2: 'health_id',
+            3: None,  # +NEW
+            4: 'location_code',
+            5: 'first_name',
+            6: 'last_name',
+            7: 'gender',
+            8: 'dob',
+            9: 'hohh',
+            10: 'mother_id',
+            11: None, #+BIR
+            12: 'delivery',
+            13: 'weight',
+            14: None, # +MOB
+            15: 'mobile',
+        }
+
+    def post_process(self):
+
+        self.date_assign()
+        self.health_id_set()
+        self.gender_harmonize()
+        self.dob_reformat()
+        self.store_person_type()
+        self.guess_hohh()
+        self.guess_mother_id()
+        self.clean_mobile()
+        self.mob_spaces()
+        self.mob_prefix_ethiopia()
+
+    def has_bir(self):
+        return self.delivery
+
+    def date_assign(self):
+        """ Assign March 21st, 2010 as encounter date """
+        if not self.date:
+            self.date = '2010-03-21'
+
+    def health_id_set(self):
+        """ gets the first available HealthId from DB """
+        self.health_id = HealthId.objects \
+               .filter(status__in=(HealthId.STATUS_PRINTED, \
+               HealthId.STATUS_GENERATED))[0].health_id
+
+    def gender_harmonize(self):
+        """ replace male/female with appropriate abbreviations """
+        if self.gender:
+            gender = self.gender.strip().lower()
+            if gender == 'female':
+                self.gender = 'F'
+            elif gender == 'male':
+                self.gender = 'M'
+
+    def dob_reformat(self):
+        """ convert dob from mm/dd/yyyy to yyyy-mm-dd """
+        if self.dob and self.dob.count('/') == 2:
+            dob = self.dob.split('/')
+            self.dob = u"%(day)s-%(month)s-%(year)s" \
+                       % {'year': dob[2], \
+                          'month': dob[0] if dob[0].__len__() == 2 \
+                                          else '0%s' % dob[0], \
+                          'day': dob[1] if dob[1].__len__() == 2 \
+                                        else '0%s' % dob[1]}
+
+    def store_person_type(self):
+        """ set an harmonized person type based on hohh field """
+        if self.hohh:
+            if self.hohh.lower() == 'mother':
+                self.person_type = self.MOTHER
+            elif self.hohh.lower() == 'father':
+                self.person_type = self.FATHER
+            else:
+                self.person_type = self.CHILD
+        
+    def guess_hohh(self):
+        """ fills HoHH based on last rows and person type """
+        if self.hh_number:
+            # new HH
+            data_change('hh_number', self.health_id)
+            self.hohh = 'H'
+        else:
+            self.hohh = data_get('hh_number')
+
+    def guess_mother_id(self):
+        """ filles mother_id based on last rows and person type """
+        if self.person_type == self.MOTHER:
+            data_change('mother_id', self.health_id)
+        if self.person_type == self.CHILD:
+            self.mother_id = data_get('mother_id')
+
+    def mob_spaces(self):
+        if self.mobile:
+            self.mobile = self.mobile.replace(' ', '')
+
+    def mob_prefix_ethiopia(self):
+        if self.mobile:
+            self.mobile = '251%s' % self.mobile.strip().replace(' ','')
 
 def import_csv(csv_file, form, handler, username, chw_id):
 
