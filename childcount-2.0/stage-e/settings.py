@@ -11,6 +11,8 @@ INSTALLED_APPS.extend([
     'djcelery',
 ])
 
+DEBUG = False
+
 BROKER_HOST = "localhost"
 BROKER_PORT = 5672
 BROKER_USER = "childcount"
