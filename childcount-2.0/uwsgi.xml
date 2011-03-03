@@ -41,6 +41,7 @@
     <pythonpath>/home/mvp/sms</pythonpath>
     <pythonpath>/home/mvp/sms/apps</pythonpath>
     <pythonpath>/home/mvp/sms/lib</pythonpath>
+    <pythonpath>/home/mvp/sms/lib/ccdoc</pythonpath>
     <app mountpoint="/">
         <script>django_wsgi</script>
     </app>
