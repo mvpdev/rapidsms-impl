@@ -194,6 +194,17 @@ class FormA(object):
                 # not in map
                 pass
 
+    def sanitize_names(self):
+        """ execute _sanitize_name on both first and last name """
+        self.first_name = self._sanitize_name(self.first_name)
+        self.last_name = self._sanitize_name(self.last_name)
+
+    def _sanitize_name(self, name):
+        """ replaces spaces in name by a dash (-) """
+        if u" " in name:
+            return name.replace(u" ", u"-")
+        return name
+
     def clean_mobile(self):
         if self.mobile:
             self.mobile = re.sub(r'\D*', '', self.mobile.strip())
@@ -760,18 +771,20 @@ class KoraroFormA(FormA):
             7: 'gender',
             8: 'dob',
             9: 'hohh',
-            10: 'mother_id',
-            11: None, #+BIR
-            12: 'delivery',
-            13: 'weight',
-            14: None, # +MOB
-            15: 'mobile',
+            #10: 'mother_id',
+            10: None, #+BIR
+            11: 'delivery',
+            12: 'weight',
+            13: None, # +MOB
+            14: 'mobile',
         }
 
     def post_process(self):
 
         self.date_assign()
         self.health_id_set()
+        self.fname_unpack()
+        self.sanitize_names()
         self.gender_harmonize()
         self.dob_reformat()
         self.store_person_type()
@@ -808,6 +821,9 @@ class KoraroFormA(FormA):
         """ convert dob from mm/dd/yyyy to yyyy-mm-dd """
         if self.dob and self.dob.count('/') == 2:
             dob = self.dob.split('/')
+            for i in range(0, 2):
+                if dob[i] in ('0', '00'):
+                    dob[i] = '01'
             self.dob = u"%(day)s-%(month)s-%(year)s" \
                        % {'year': dob[2], \
                           'month': dob[0] if dob[0].__len__() == 2 \
@@ -848,6 +864,12 @@ class KoraroFormA(FormA):
     def mob_prefix_ethiopia(self):
         if self.mobile:
             self.mobile = '251%s' % self.mobile.strip().replace(' ','')
+
+    def fname_unpack(self):
+        if '/' in self.first_name:
+            self.first_name = self.first_name.replace(u"G/", u"Gebre")
+            self.first_name = self.first_name.replace(u"H/", u"Haile")
+            self.first_name = self.first_name.replace(u"T/", u"Tekle")
 
 def import_csv(csv_file, form, handler, username, chw_id):
 
