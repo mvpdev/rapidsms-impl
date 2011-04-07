@@ -3,13 +3,6 @@
 	<pythonpath>/usr/local/lib/python2.6/dist-packages/Babel-0.9.4-py2.6.egg</pythonpath>
 	<pythonpath>/usr/local/lib/python2.6/dist-packages/virtualenv-1.4.5-py2.6.egg</pythonpath>
 	<pythonpath>/usr/local/lib/python2.6/dist-packages/pip-0.6.3-py2.6.egg</pythonpath>
-	<pythonpath>/usr/local/lib/python2.6/dist-packages/celery-2.0.2-py2.6.egg</pythonpath>
-	<pythonpath>/usr/local/lib/python2.6/dist-packages/importlib-1.0.2-py2.6.egg</pythonpath>
-	<pythonpath>/usr/local/lib/python2.6/dist-packages/carrot-0.10.5-py2.6.egg</pythonpath>
-	<pythonpath>/usr/local/lib/python2.6/dist-packages/django_celery-2.0.2-py2.6.egg</pythonpath>
-	<pythonpath>/usr/local/lib/python2.6/dist-packages/amqplib-0.6.1-py2.6.egg</pythonpath>
-	<pythonpath>/usr/local/lib/python2.6/dist-packages/anyjson-0.2.4-py2.6.egg</pythonpath>
-	<pythonpath>/usr/local/lib/python2.6/dist-packages/django_picklefield-0.1.6-py2.6.egg</pythonpath>
 	<pythonpath>/usr/lib/python2.6</pythonpath>
 	<pythonpath>/usr/lib/python2.6/plat-linux2</pythonpath>
 	<pythonpath>/usr/lib/python2.6/lib-tk</pythonpath>
@@ -30,8 +23,9 @@
     <pythonpath>/usr/local/lib/python2.6/dist-packages/rapidsms/lib</pythonpath>
     <pythonpath>/usr/local/lib/python2.6/dist-packages/rapidsms/lib/rapidsms</pythonpath>
     <pythonpath>/usr/local/lib/python2.6/dist-packages/rapidsms/lib/rapidsms/webui</pythonpath>
-    <pythonpath>/home/mvp/sms</pythonpath>
-    <pythonpath>/home/mvp/sms/apps</pythonpath>
+    <pythonpath>/home/childcount/sms</pythonpath>
+    <pythonpath>/home/childcount/sms/apps</pythonpath>
+    <pythonpath>/home/childcount/sms/lib</pythonpath>
     <app mountpoint="/">
         <script>django_wsgi</script>
     </app>
