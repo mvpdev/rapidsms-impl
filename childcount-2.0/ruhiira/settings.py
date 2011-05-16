@@ -32,6 +32,8 @@ CELERY_LOADER='django'
 CELERY_AMQP_TASK_RESULT_EXPIRES = 60*60
 CELERY_IMPORTS = ('reportgen.definitions',)
 
+CACHE_BACKEND = 'file:///tmp/django_cache'
+
 ADMIN_MEDIA_PREFIX = '/adminmedia/'
 
 TIME_ZONE = 'Africa/Kampala'
