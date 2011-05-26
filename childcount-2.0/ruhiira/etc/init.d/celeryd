@@ -89,7 +89,7 @@ CELERYD_CHDIR="/home/childcount/sms"
 DJANGO_SETTINGS_MODULE="settings"
 #
 # # Path to celeryd
-CELERYD="/home/mvp/sms/rapidsms celeryd"
+CELERYD="nice /home/mvp/sms/rapidsms celeryd"
 # /etc/init.d/ssh: start and stop the celery task worker daemon.
 
 if test -f /etc/default/celeryd; then
@@ -102,7 +102,7 @@ export CELERY_LOADER
 
 . /lib/lsb/init-functions
 
-CELERYD_OPTS="$CELERYD_OPTS -f $CELERYD_LOG_FILE -l $CELERYD_LOG_LEVEL -B"
+CELERYD_OPTS="$CELERYD_OPTS -f $CELERYD_LOG_FILE -l $CELERYD_LOG_LEVEL -B --concurrency=4"
 
 if [ -n "$2" ]; then
 CELERYD_OPTS="$CELERYD_OPTS $2"
@@ -162,6 +162,7 @@ start_worker () {
 $* \
 --pidfile $CELERYD_PID_FILE
 --exec $CELERYD -- $CELERYD_OPTS"
+echo $cmd;
     if $cmd; then
 log_end_msg 0
     else

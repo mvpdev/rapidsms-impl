@@ -32,7 +32,7 @@ CELERY_LOADER='django'
 CELERY_AMQP_TASK_RESULT_EXPIRES = 60*60
 CELERY_IMPORTS = ('reportgen.definitions',)
 
-CACHE_BACKEND = 'file:///tmp/django_cache'
+CACHE_BACKEND = 'file:///tmp/django_cache?max_entries=10000&cull_frequency=2'
 
 ADMIN_MEDIA_PREFIX = '/adminmedia/'
 
