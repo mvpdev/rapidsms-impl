@@ -1,0 +1,1 @@
+ATTRS{idVendor}=="06e0", ATTRS{idProduct}=="f111", SYMLINK+="multitech-modem"
