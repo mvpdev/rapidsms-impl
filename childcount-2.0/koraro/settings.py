@@ -8,7 +8,6 @@ try:
     INSTALLED_APPS.extend([
     'django.contrib.admin',
     'reversion',
-    'django_extensions',
     'south',
     'djcelery',
     'alerts'
