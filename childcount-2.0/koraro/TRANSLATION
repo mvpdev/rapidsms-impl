@@ -1,0 +1,20 @@
+In python 2.6, the locale module has a hard-coded dictionary
+locale.locale_alias that Django uses to check for installed 
+languages. Since Tigrinya is not in that hard-coded dictionary,
+Django never will support translations using the 'ti' language
+code.
+
+To avoid this problem, we will use the language code 'am' to
+represent Tigrinya within the ChildCount+ Django application.
+
+If you need the reports or dashboard to be translated into
+Tigrinya, you must run the following command:
+
+    sudo locale-gen am
+    cd /usr/lib/pymodules/python2.6/django/conf/locale
+    sudo cp -R en am
+    cd - 
+
+This creates stub Tigrinya translations for Django and enables
+reports to be translated into Tigrinya.
+
