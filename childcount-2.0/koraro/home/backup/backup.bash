@@ -21,8 +21,8 @@ OMRS_FILEPATH=$BACKUP_DIR$OMRS_FILENAME
 RSMS_FILENAME_COMP=$RSMS_FILENAME$GZIP_EXT
 OMRS_FILENAME_COMP=$OMRS_FILENAME$GZIP_EXT
 
-RSMS_FILEPATH_COMP=$RSMS_FILENAME_COMP$GZIP_EXT
-OMRS_FILEPATH_COMP=$OMRS_FILENAME_COMP$GZIP_EXT
+RSMS_FILEPATH_COMP=$BACKUP_DIR$RSMS_FILENAME_COMP
+OMRS_FILEPATH_COMP=$BACKUP_DIR$OMRS_FILENAME_COMP
 
 LOGFILE=/home/mvp/backup/backup.log
 
@@ -50,12 +50,12 @@ echo "Finished compressing OpenMRS DB $OMRS_FILEPATH => $OMRS_FILEPATH_COMP" &>>
 
 # Transfer CC+ DB
 echo "Transfering $RSMS_FILENAME" &>> $LOGFILE
-smbclient \\\\server\\ChildCount -U Administrator -c "put $RSMS_FILENAME_COMP" pp@@ssword &>> $LOGFILE
+smbclient \\\\server\\ChildCount -U Administrator -c "put $RSMS_FILEPATH_COMP $RSMS_FILENAME_COMP" pp@@ssword &>> $LOGFILE
 echo "Finished transfering $RSMS_FILENAME_COMP" &>> $LOGFILE
 
 # Transfer OpenMRS DB
 echo "Transfering $OMRS_FILENAME_COMP" &>> $LOGFILE
-smbclient \\\\server\\ChildCount -U Administrator -c "put $OMRS_FILENAME_COMP" pp@@ssword &>> $LOGFILE
+smbclient \\\\server\\ChildCount -U Administrator -c "put $OMRS_FILEPATH_COMP $OMRS_FILENAME_COMP" pp@@ssword &>> $LOGFILE
 echo "Finished transfering $OMRS_FILENAME_COMP" &>> $LOGFILE
 
 END_DATE=`date +%F~%T`
