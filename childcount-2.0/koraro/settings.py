@@ -8,6 +8,7 @@ try:
     INSTALLED_APPS.extend([
     'django.contrib.admin',
     'reversion',
+    'django_extensions',
     'south',
     'djcelery',
     'alerts'
@@ -15,11 +16,16 @@ try:
 except NameError:
     print "Could not find INSTALLED_APPS"
 
-DEBUG = False
+DEBUG = True
 
-# Set this so that reports generate in
-# Tigrinya
+# Defines the language in which 
+# reports generate. For the sake of
+# sanity, make sure this is the same
+# code as set by the "lang" option
+# under the "[bonjour]" header in
+# local.ini
 LANGUAGE_CODE = 'am'
+
 LANGUAGES = (
     ('en', 'English'),
     ('fr', 'French'),

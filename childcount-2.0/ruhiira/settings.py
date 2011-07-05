@@ -3,14 +3,18 @@
 # maintainer: dgelvin
 import time
 from django.conf import settings
-INSTALLED_APPS.extend([
-'django.contrib.admin',
-'reversion',
-'django_extensions',
-'south',
-'djcelery',
-'alerts'
-])
+
+try:
+    INSTALLED_APPS.extend([
+    'django.contrib.admin',
+    'reversion',
+    'django_extensions',
+    'south',
+    'djcelery',
+    'alerts'
+    ])
+except NameError:
+    print "Couldn't find INSTALLED_APPS"
 
 DEBUG = True
 
