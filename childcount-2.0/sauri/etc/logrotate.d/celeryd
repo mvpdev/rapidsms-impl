@@ -1,0 +1,9 @@
+/var/log/celeryd.log {
+        daily
+	missingok
+        compress
+        delaycompress
+        notifempty
+        copytruncate
+	rotate 30
+}
