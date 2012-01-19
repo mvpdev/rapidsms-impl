@@ -80,6 +80,8 @@ ALTER TABLE cc_export_tmp DROP delta_days;
 
 SELECT * 
 INTO OUTFILE '/tmp/formB.csv' 
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+  LINES TERMINATED BY '\n'
 FROM cc_export_tmp;
 
 DROP TABLE IF EXISTS `cc_export_tmp`;

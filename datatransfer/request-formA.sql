@@ -81,6 +81,8 @@ ALTER TABLE cc_export_tmp DROP mother_id;
 
 SELECT * 
 INTO OUTFILE '/tmp/formA.csv' 
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+  LINES TERMINATED BY '\n'
 FROM cc_export_tmp;
 
 DROP TABLE IF EXISTS `cc_export_tmp`;
