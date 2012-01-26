@@ -54,7 +54,7 @@ def generate_research_ids(field, table, research_field, \
         item_id = item[0]
         research_id = '%s-%s-%s' % (SITE, item_id, \
                                     datetime.now().strftime('%s%f'))
-        research_id = hashlib.md5(research_id).hexdigest()
+        research_id = hashlib.md5(research_id).hexdigest()[:10]
         if add_days:
             days = random.randint(-14, 14)
         else:
