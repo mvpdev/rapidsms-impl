@@ -4,8 +4,10 @@ CREATE TEMPORARY TABLE `cc_export_tmp`
 SELECT 'id' as id, 'delta_days', 'encounter_date', 'encounter_year', 'encounter_month', 
 'encounter_day', 'encounter_type', 'chw', 'hohh', 'location', 'counseling_codes', 
 'available', 'numofchildren', 'noofwomen', 'womenusingfp',
+  'num_pills_given',
+  'num_women_given_pills',
   'numofsick', 'numofrdtusedonother', 'numofrdtpositive', 'numontreatement'
- UNION;
+ UNION
 SELECT
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
@@ -21,6 +23,8 @@ SELECT
   cc_hhvisitrpt.available as available,
   cc_hhvisitrpt.children as numofchildren,
   NULL as noofwomen, NULL as womenusingfp,
+  NULL AS num_pills_given,
+  NULL AS num_women_given_pills,
   NULL          AS numofsick,
   NULL          AS numofrdtusedonother,
   NULL AS numofrdtpositive,
@@ -72,6 +76,8 @@ UNION
   NULL as counseling_codes, NULL as available, NULL as numofchildren,
   cc_fprpt.women as noofwomen,
   cc_fprpt.women_using as womenusingfp,
+  NULL AS num_pills_given,
+  NULL AS num_women_given_pills,
   NULL          AS numofsick,
   NULL          AS numofrdtusedonother,
   NULL AS numofrdtpositive,
@@ -99,6 +105,8 @@ SELECT
   NULL as counseling_codes, NULL as available, NULL as numofchildren,
   NULL as noofwomen,
   NULL as womenusingfp,
+  NULL AS num_pills_given,
+  NULL AS num_women_given_pills,
   cc_sickrpt.sick          AS numofsick,
   cc_sickrpt.rdts          AS numofrdtusedonother,
   cc_sickrpt.positive_rdts AS numofrdtpositive,
@@ -111,8 +119,36 @@ ON
 INNER JOIN cc_encounter
 ON
   cc_encounter.id = cc_ccrpt.encounter_id
-  ;
-  
+UNION
+SELECT
+  cc_ccrpt.encounter_id as id,
+  (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
+  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+    (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
+      (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
+      (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
+  cc_encounter.type as encounter_type,
+  (SELECT rchw.research_id FROM cc_patient as p, research_chw as rchw WHERE p.id=cc_encounter.patient_id AND rchw.chw_id=p.chw_id) as chw,
+  (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as hohh_id,
+  (SELECT rl.research_id FROM research_location as rl, cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id AND rl.location_id=p.location_id) as location, 
+  NULL as counseling_codes, NULL as available, NULL as numofchildren,
+  NULL as noofwomen,
+  NULL as womenusingfp,
+  cc_bcprpt.pills AS num_pills_given,
+  cc_bcprpt.women AS num_women_given_pills,
+  NULL          AS numofsick,
+  NULL          AS numofrdtusedonother,
+  NULL AS numofrdtpositive,
+  NULL  AS numontreatement
+FROM
+  cc_ccrpt
+INNER JOIN cc_bcprpt
+ON
+  cc_bcprpt.ccreport_ptr_id = cc_ccrpt.id
+INNER JOIN cc_encounter
+ON
+  cc_encounter.id = cc_ccrpt.encounter_id
+  ;  
 ALTER TABLE cc_export_tmp DROP delta_days;
 
 SELECT * 
