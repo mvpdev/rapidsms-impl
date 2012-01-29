@@ -11,8 +11,8 @@ USERNAME = "childcount"
 PASSWORD = "childcount"
 DATABASE = "childcount"
 SITE = None
-SITE = "mayange"
-SITE_PREFIX = "#24"
+SITE_CODE = ""
+SITE_ABBR = ""
 
 from datetime import date, datetime
 

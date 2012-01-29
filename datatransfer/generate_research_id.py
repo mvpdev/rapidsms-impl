@@ -11,19 +11,19 @@ from database import *
 def generate_patient_ids():
     print("Generating PATIENT IDs")
     generate_research_ids('health_id', 'cc_patient', 'health_id', \
-                          'research_patient', add_days=True)
+                        'research_patient', add_days=True, prefix=SITE_ABBR)
 
 
 def generate_deadperson_ids():
     print("Generating DEAD PERSON IDs")
     generate_research_ids('id', 'cc_dead_person', 'dead_id', \
-                          'research_deadperson', add_days=True)
+                        'research_deadperson', add_days=True,prefix=SITE_ABBR)
 
 
 def generate_location_ids():
     print("Generating LOCATION IDs")
     generate_research_ids('id', 'locations_location', 'location_id', \
-                          'research_location', add_days=False)
+                        'research_location', add_days=False, prefix=SITE_CODE)
 
 
 def generate_clinic_ids():
@@ -34,11 +34,11 @@ def generate_clinic_ids():
 def generate_chw_ids():
     print("Generating CHW IDs")
     generate_research_ids('reporter_ptr_id', 'cc_chw', 'chw_id', \
-                          'research_chw', add_days=False)
+                          'research_chw', add_days=False, prefix=SITE_ABBR)
 
 
 def generate_research_ids(field, table, research_field, \
-                          research_table, add_days=False):
+                          research_table, add_days=False, prefix=''):
     cursor = conn.cursor()
     cursor.execute("SELECT tbl.%(field)s FROM %(table)s as tbl WHERE " \
                    "tbl.%(field)s NOT IN (SELECT rtbl.%(research_field)s " \
@@ -55,7 +55,7 @@ def generate_research_ids(field, table, research_field, \
         research_id = '%s-%s-%s' % (SITE, item_id, \
                                     datetime.now().strftime('%s%f'))
         research_id = hashlib.md5(research_id).hexdigest()[:10]
-        research_id ='%s%s' % (SITE_PREFIX, research_id)
+        research_id ='%s%s' % (prefix, research_id.upper())
         if add_days:
             days = random.randint(-30, -1)
         else:
