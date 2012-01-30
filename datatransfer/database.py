@@ -11,8 +11,7 @@ USERNAME = "childcount"
 PASSWORD = "childcount"
 DATABASE = "childcount"
 SITE = None
-SITE_CODE = ""
-SITE_ABBR = ""
+SITE_ABBR = None
 
 from datetime import date, datetime
 

@@ -81,7 +81,11 @@ def generate_research_ids(field, table, research_field, \
 
 def main():
     if not SITE:
-        print("DIE: SITE variable in not configured.\nAdd site name in it.")
+        print("DIE: SITE variable is not configured.\nAdd site name in it.")
+        exit(1)
+    if not SITE_ABBR:
+        print ("DIE: SITE_ABBR variable is not configured."\
+               "\nAdd site abbreviation in it.")
         exit(1)
     generate_patient_ids()
     generate_location_ids()
