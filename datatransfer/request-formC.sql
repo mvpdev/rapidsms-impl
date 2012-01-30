@@ -10,7 +10,7 @@ SELECT 'id' as id, 'delta_days', 'encounter_date', 'encounter_year', 'encounter_
 SELECT -- Followup Report
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
@@ -46,7 +46,7 @@ UNION
 SELECT -- Danger Signs Report
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
@@ -107,7 +107,7 @@ UNION
 SELECT -- Neonatal Report
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
@@ -143,7 +143,7 @@ UNION
   SELECT -- UnderOne Report
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
@@ -179,7 +179,7 @@ UNION
   SELECT
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
@@ -215,7 +215,7 @@ UNION
   SELECT -- Nutrition Report
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
@@ -251,7 +251,7 @@ UNION
   SELECT -- Fever Report
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
@@ -287,7 +287,7 @@ UNION
 SELECT -- Referral Report
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
@@ -323,7 +323,7 @@ UNION
 SELECT -- Medicine Given Report
   cc_ccrpt.encounter_id as id,
   (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-  (SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+  DATE_FORMAT((SELECT DATE_ADD(cc_encounter.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
       (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,

@@ -18,7 +18,7 @@ SELECT
      (SELECT CONCAT(p.first_name, " ", p.last_name) FROM cc_patient as p WHERE p.id=e.patient_id) as patient_name, 
 
     (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=e.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-    (SELECT DATE_ADD(e.encounter_date,  INTERVAL delta_days DAY) ) as encounter_date,
+    DATE_FORMAT((SELECT DATE_ADD(e.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
     (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
       (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
     (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
