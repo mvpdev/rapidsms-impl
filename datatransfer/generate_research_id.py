@@ -23,7 +23,7 @@ def generate_deadperson_ids():
 def generate_location_ids():
     print("Generating LOCATION IDs")
     generate_research_ids('id', 'locations_location', 'location_id', \
-                        'research_location', add_days=False, prefix=SITE_CODE)
+                        'research_location', add_days=False, prefix=SITE_ABBR)
 
 
 def generate_clinic_ids():
