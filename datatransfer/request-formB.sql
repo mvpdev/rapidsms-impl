@@ -150,6 +150,9 @@ ON
   cc_encounter.id = cc_ccrpt.encounter_id
   ;  
 ALTER TABLE cc_export_tmp DROP delta_days;
+ALTER TABLE cc_export_tmp DROP encounter_year_mod;
+ALTER TABLE cc_export_tmp DROP encounter_month_mod;
+ALTER TABLE cc_export_tmp DROP encounter_day_mod;
 
 SELECT * 
 INTO OUTFILE '/tmp/formB.csv' 

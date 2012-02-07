@@ -75,6 +75,9 @@ FROM cc_dead_person as ccd;
 
 ALTER TABLE cc_export_tmp DROP patient_name;
 ALTER TABLE cc_export_tmp DROP delta_days;
+ALTER TABLE cc_export_tmp DROP encounter_year_mod;
+ALTER TABLE cc_export_tmp DROP encounter_month_mod;
+ALTER TABLE cc_export_tmp DROP encounter_day_mod;
 ALTER TABLE cc_export_tmp DROP original_encounter_date;
 ALTER TABLE cc_export_tmp DROP hohh_id;
 ALTER TABLE cc_export_tmp DROP mother_id;
