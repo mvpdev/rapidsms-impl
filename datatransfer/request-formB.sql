@@ -2,11 +2,9 @@ DROP TABLE IF EXISTS `cc_export_tmp`;
 
 CREATE TEMPORARY TABLE `cc_export_tmp`
 SELECT 'Seq' as Seq, 'delta_days', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
-'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'counseling_codes', 
-'available', 'numofchildren', 'noofwomen', 'womenusingfp',
-  'num_pills_given',
-  'num_women_given_pills',
-  'numofsick', 'numofrdtusedonother', 'numofrdtpositive', 'numontreatement'
+'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'available',  'numofchildren', 'counseling_codes',
+  'numofsick', 'numofrdtusedonother', 'numofrdtpositive', 'numontreatement', 
+ 'noofwomen', 'womenusingfp', 'num_pills_given', 'num_women_given_pills'
  UNION
 SELECT
   cc_ccrpt.encounter_id as Seq,
@@ -19,16 +17,16 @@ SELECT
   (SELECT rchw.research_id FROM cc_patient as p, research_chw as rchw WHERE p.id=cc_encounter.patient_id AND rchw.chw_id=p.chw_id) as chw,
   (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as hohh,
   (SELECT rl.research_id FROM research_location as rl, cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id AND rl.location_id=p.location_id) as location, 
-  v_cc_hhvisitrpt_counseling.codes as counseling_codes,
   cc_hhvisitrpt.available as available,
   cc_hhvisitrpt.children as numofchildren,
-  NULL as noofwomen, NULL as womenusingfp,
-  NULL AS num_pills_given,
-  NULL AS num_women_given_pills,
+  v_cc_hhvisitrpt_counseling.codes as counseling_codes,
   NULL          AS numofsick,
   NULL          AS numofrdtusedonother,
   NULL AS numofrdtpositive,
-  NULL  AS numontreatement
+  NULL  AS numontreatement,
+  NULL as noofwomen, NULL as womenusingfp,
+  NULL AS num_pills_given,
+  NULL AS num_women_given_pills
 FROM
   cc_hhvisitrpt
 INNER JOIN cc_ccrpt
@@ -73,15 +71,15 @@ UNION
   (SELECT rchw.research_id FROM cc_patient as p, research_chw as rchw WHERE p.id=cc_encounter.patient_id AND rchw.chw_id=p.chw_id) as chw,
   (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as hohh_id,
   (SELECT rl.research_id FROM research_location as rl, cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id AND rl.location_id=p.location_id) as location, 
-  NULL as counseling_codes, NULL as available, NULL as numofchildren,
-  cc_fprpt.women as noofwomen,
-  cc_fprpt.women_using as womenusingfp,
-  NULL AS num_pills_given,
-  NULL AS num_women_given_pills,
+ NULL as available, NULL as numofchildren,  NULL as counseling_codes,
   NULL          AS numofsick,
   NULL          AS numofrdtusedonother,
   NULL AS numofrdtpositive,
-  NULL  AS numontreatement
+  NULL  AS numontreatement,
+  cc_fprpt.women as noofwomen,
+  cc_fprpt.women_using as womenusingfp,
+  NULL AS num_pills_given,
+  NULL AS num_women_given_pills
 FROM
   cc_ccrpt
 INNER JOIN cc_fprpt
@@ -102,15 +100,15 @@ SELECT
   (SELECT rchw.research_id FROM cc_patient as p, research_chw as rchw WHERE p.id=cc_encounter.patient_id AND rchw.chw_id=p.chw_id) as chw,
   (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as hohh_id,
   (SELECT rl.research_id FROM research_location as rl, cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id AND rl.location_id=p.location_id) as location, 
-  NULL as counseling_codes, NULL as available, NULL as numofchildren,
-  NULL as noofwomen,
-  NULL as womenusingfp,
-  NULL AS num_pills_given,
-  NULL AS num_women_given_pills,
+ NULL as available, NULL as numofchildren,  NULL as counseling_codes,
   cc_sickrpt.sick          AS numofsick,
   cc_sickrpt.rdts          AS numofrdtusedonother,
   cc_sickrpt.positive_rdts AS numofrdtpositive,
-  cc_sickrpt.on_treatment  AS numontreatement
+  cc_sickrpt.on_treatment  AS numontreatement,
+  NULL as noofwomen,
+  NULL as womenusingfp,
+  NULL AS num_pills_given,
+  NULL AS num_women_given_pills
 FROM
   cc_ccrpt
 INNER JOIN cc_sickrpt
@@ -131,17 +129,16 @@ SELECT
   (SELECT rchw.research_id FROM cc_patient as p, research_chw as rchw WHERE p.id=cc_encounter.patient_id AND rchw.chw_id=p.chw_id) as chw,
   (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id) as hohh_id,
   (SELECT rl.research_id FROM research_location as rl, cc_patient as p, research_patient as rp WHERE p.id=cc_encounter.patient_id AND p.health_id=rp.health_id AND rl.location_id=p.location_id) as location, 
-  NULL as counseling_codes, NULL as available, NULL as numofchildren,
-  NULL as noofwomen,
-  NULL as womenusingfp,
-  cc_bcprpt.pills AS num_pills_given,
-  cc_bcprpt.women AS num_women_given_pills,
+  NULL as available, NULL as numofchildren, NULL as counseling_codes,
   NULL          AS numofsick,
   NULL          AS numofrdtusedonother,
   NULL AS numofrdtpositive,
-  NULL  AS numontreatement
-FROM
-  cc_ccrpt
+  NULL  AS numontreatement,
+  NULL as noofwomen,
+  NULL as womenusingfp,
+  cc_bcprpt.pills AS num_pills_given,
+  cc_bcprpt.women AS num_women_given_pills
+FROM  cc_ccrpt
 INNER JOIN cc_bcprpt
 ON
   cc_bcprpt.ccreport_ptr_id = cc_ccrpt.id
