@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `cc_export_tmp`;
 
 CREATE TEMPORARY TABLE `cc_export_tmp`
-SELECT 'id' as Seq, 'delta_days', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
+SELECT 'Seq' as Seq, 'delta_days', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
 'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'counseling_codes', 
 'available', 'numofchildren', 'noofwomen', 'womenusingfp',
   'num_pills_given',
