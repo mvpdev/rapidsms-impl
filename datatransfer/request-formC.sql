@@ -5,7 +5,7 @@ SELECT 'Seq' as Seq, 'delta_days', 'encounter_date_mod', 'encounter_year_mod', '
 'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'visited_clinic', 
 'improvement', 'danger_signs', 'month_of_pregnancy', 'no_of_anc_visits',
   'weeks_since_last_anc','neonatal_clinic_visits', 'breast_feeding_only', 'immunized', 'muac', 'oedema',
-  'weight', 'nutrition_status', 'muardt_resultc', 'referral', 'medicines_given'
+  'weight', 'nutrition_status', 'rdt_result', 'referral', 'medicines_given'
  UNION
 SELECT -- Followup Report
   cc_ccrpt.encounter_id as Seq,
