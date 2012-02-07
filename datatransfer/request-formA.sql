@@ -6,26 +6,26 @@
 DROP TABLE IF EXISTS `cc_export_tmp`;
 
 CREATE TEMPORARY TABLE `cc_export_tmp`
-SELECT 'id', 'patient_name', 'delta_days', 'encounter_date', 'encounter_year', 'encounter_month', 
-'encounter_day', 'patient_dob', 'age_at_encounter', 'original_encounter_date', 'patient_registered_on', 
+SELECT 'Seq', 'patient_name', 'delta_days', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
+'encounter_day_mod', 'patient_dob_mod', 'age_at_encounter', 'original_encounter_date', 'patient_registered_on_mod', 
 'patient_id', 'location', 'patient_gender', 'hohh_id', 'hohh', 'mother_id', 'mother', 'chw', 'bir_delivered_in_hf', 
-'bir_weight', 'status', 'death_date', 'sbmc_date', 'sbmc_type'
+'bir_weight', 'status', 'death_date_mod', 'sbmc_date_mod', 'sbmc_type'
 UNION 
 SELECT 
-        e.id as id, 
+        e.id as Seq, 
 
        # debug only
      (SELECT CONCAT(p.first_name, " ", p.last_name) FROM cc_patient as p WHERE p.id=e.patient_id) as patient_name, 
 
     (SELECT rp.days FROM cc_patient as p, research_patient as rp WHERE p.id=e.patient_id AND p.health_id=rp.health_id) as delta_days,  # to remove
-    DATE_FORMAT((SELECT DATE_ADD(e.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date,
-    (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year,
-      (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month,
-    (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day,
-    (SELECT DATE_ADD(p.dob,  INTERVAL delta_days DAY) FROM cc_patient as p WHERE p.id=e.patient_id) as patient_dob,
+    DATE_FORMAT((SELECT DATE_ADD(e.encounter_date,  INTERVAL delta_days DAY) ), '%Y-%m-%d') as encounter_date_mod,
+    (SELECT YEAR(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_year_mod,
+      (SELECT MONTH(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_month_mod,
+    (SELECT DAY(DATE_ADD(encounter_date,  INTERVAL delta_days DAY))) as encounter_day_mod,
+    (SELECT DATE_ADD(p.dob,  INTERVAL delta_days DAY) FROM cc_patient as p WHERE p.id=e.patient_id) as patient_dob_mod,
     (SELECT DATEDIFF(e.encounter_date, p.dob)/365 FROM cc_patient as p WHERE p.id=e.patient_id) as age_at_encounter,
     e.encounter_date as original_encounter_date,
-    (SELECT DATE_ADD(p.created_on,  INTERVAL delta_days DAY) FROM cc_patient as p WHERE p.id=e.patient_id) as patient_registered_on, 
+    (SELECT DATE_ADD(p.created_on,  INTERVAL delta_days DAY) FROM cc_patient as p WHERE p.id=e.patient_id) as patient_registered_on_mod, 
         (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=e.patient_id AND p.health_id=rp.health_id) as patient_id, 
     (SELECT rl.research_id FROM research_location as rl, cc_patient as p, research_patient as rp WHERE p.id=e.patient_id AND p.health_id=rp.health_id AND rl.location_id=p.location_id) as location, 
     (SELECT p.gender FROM cc_patient as p WHERE p.id=e.patient_id) as patient_gender, 
@@ -40,19 +40,19 @@ SELECT
     (SELECT bir.weight FROM cc_birthrpt as bir, cc_ccrpt as cc WHERE bir.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as bir_weight, 
 
     (SELECT p.status FROM cc_patient as p WHERE p.id=e.patient_id) as patient_status, 
-      (SELECT DATE_ADD(dr.death_date,  INTERVAL delta_days DAY) FROM cc_deathrpt as dr, cc_ccrpt as cc WHERE dr.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as death_date, 
-    (SELECT DATE_ADD(sbmc.incident_date,  INTERVAL delta_days DAY) FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_date, 
+      (SELECT DATE_ADD(dr.death_date,  INTERVAL delta_days DAY) FROM cc_deathrpt as dr, cc_ccrpt as cc WHERE dr.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as death_date_mod, 
+    (SELECT DATE_ADD(sbmc.incident_date,  INTERVAL delta_days DAY) FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_date_mod, 
     (SELECT sbmc.type FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_type
 FROM cc_encounter as e
 UNION SELECT 
-NULL, # id
+NULL, # Seq
 CONCAT(ccd.first_name, " ", ccd.last_name),
 (SELECT rccd.days FROM research_deadperson as rccd WHERE ccd.id=rccd.dead_id) as dead_delta_days,  # to remove, #delta
 NULL, # encounter_date
 NULL, # encounter year
 NULL, #encountermonth
 NULL, # encounter day
- (SELECT DATE_ADD(ccd.dob,  INTERVAL dead_delta_days DAY) ) as patient_dob,
+ (SELECT DATE_ADD(ccd.dob,  INTERVAL dead_delta_days DAY) ) as patient_dob_mod,
 NULL, # age at enc
 NULL, # original enc
 NULL, # patient registered on
@@ -67,7 +67,7 @@ NULL, #mother
 NULL, # bir delivered
 NULL, #bir weight
 -1,
-(SELECT DATE_ADD(ccd.dod,  INTERVAL dead_delta_days DAY) ) as death_date,
+(SELECT DATE_ADD(ccd.dod,  INTERVAL dead_delta_days DAY) ) as death_date_mod,
 NULL, # sbmc date
 NULL # sbmc type,
 
