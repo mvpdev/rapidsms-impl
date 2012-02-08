@@ -2,10 +2,10 @@ DROP TABLE IF EXISTS `cc_export_tmp`;
 
 CREATE TEMPORARY TABLE `cc_export_tmp`
 SELECT 'Seq' as Seq, 'delta_days', 'encounter_date', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
-'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'visited_clinic', 
-'improvement', 'danger_signs', 'month_of_pregnancy', 'no_of_anc_visits',
-  'weeks_since_last_anc','neonatal_clinic_visits', 'breast_feeding_only', 'immunized', 'muac', 'oedema',
-  'weight', 'nutrition_status', 'rdt_result', 'referral', 'medicines_given'
+'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'U1_visited_clinic', 
+'U2_improvement', 'S1_danger_signs', 'P1_month_of_pregnancy', 'P2_no_of_anc_visits',
+  'P3_weeks_since_last_anc','N1_neonatal_clinic_visits', 'T1_breast_feeding_only', 'T2_immunized', 'M1_muac', 'M2_oedema',
+  'M3_weight', 'nutrition_status', 'F1_rdt_result', 'R1_referral', 'G1_medicines_given'
  UNION
 SELECT -- Followup Report
   cc_ccrpt.encounter_id as Seq,
