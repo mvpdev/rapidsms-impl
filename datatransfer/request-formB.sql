@@ -2,9 +2,9 @@ DROP TABLE IF EXISTS `cc_export_tmp`;
 
 CREATE TEMPORARY TABLE `cc_export_tmp`
 SELECT 'Seq' as Seq, 'delta_days', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
-'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'available',  'numofchildren', 'counseling_codes',
-  'numofsick', 'numofrdtusedonother', 'numofrdtpositive', 'numontreatement', 
- 'noofwomen', 'womenusingfp', 'num_pills_given', 'num_women_given_pills'
+'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'V1_available',  'V2_numofchildren', 'V3_counseling_codes',
+  'E1_numofsick', 'E2_numofrdtusedonother', 'E3_numofrdtpositive', 'E4_numontreatement', 
+ 'P1_noofwomen', 'P2_womenusingfp', 'P3_num_pills_given', 'P4_num_women_given_pills'
  UNION
 SELECT
   cc_ccrpt.encounter_id as Seq,
