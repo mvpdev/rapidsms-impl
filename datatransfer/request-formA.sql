@@ -81,6 +81,7 @@ ALTER TABLE cc_export_tmp DROP encounter_day_mod;
 ALTER TABLE cc_export_tmp DROP original_encounter_date;
 ALTER TABLE cc_export_tmp DROP hohh_id;
 ALTER TABLE cc_export_tmp DROP mother_id;
+ALTER TABLE cc_export_tmp DROP patient_registered_on_mod;
 
 SELECT * 
 INTO OUTFILE '/tmp/formA.csv' 
