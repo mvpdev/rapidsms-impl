@@ -155,10 +155,13 @@ ALTER TABLE cc_export_tmp DROP encounter_year_mod;
 ALTER TABLE cc_export_tmp DROP encounter_month_mod;
 ALTER TABLE cc_export_tmp DROP encounter_day_mod;
 
-SELECT * 
-INTO OUTFILE '/tmp/formB.csv' 
-FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  LINES TERMINATED BY '\n'
-FROM cc_export_tmp;
+set @oFilename = "";
+PREPARE stmt1 FROM 'SELECT CONCAT("/tmp/", substring(research_id, 1,2), "_Form_B_", DATE_FORMAT(NOW(), "%Y-%m-%d"), ".csv") INTO @oFilename  FROM research_patient limit 1';
+EXECUTE stmt1;
+set @oOutput = CONCAT('SELECT * INTO OUTFILE "', @oFilename, '"  FIELDS TERMINATED BY "," OPTIONALLY ENCLOSED BY \'"\' LINES TERMINATED BY \'\n\' FROM cc_export_tmp');
+PREPARE stmt2 FROM @oOutput;         
+EXECUTE stmt2;
+DEALLOCATE PREPARE stmt1;
+DEALLOCATE PREPARE stmt2;
 
 DROP TABLE IF EXISTS `cc_export_tmp`;

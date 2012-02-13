@@ -91,10 +91,14 @@ ALTER TABLE cc_export_tmp DROP hohh_id;
 ALTER TABLE cc_export_tmp DROP mother_id;
 ALTER TABLE cc_export_tmp DROP patient_registered_on_mod;
 
-SELECT * 
-INTO OUTFILE '/tmp/formA.csv' 
-FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  LINES TERMINATED BY '\n'
-FROM cc_export_tmp;
+
+set @oFilename = "";
+PREPARE stmt1 FROM 'SELECT CONCAT("/tmp/", substring(research_id, 1,2), "_Form_A_", DATE_FORMAT(NOW(), "%Y-%m-%d"), ".csv") INTO @oFilename  FROM research_patient limit 1';
+EXECUTE stmt1;
+set @oOutput = CONCAT('SELECT * INTO OUTFILE "', @oFilename, '"  FIELDS TERMINATED BY "," OPTIONALLY ENCLOSED BY \'"\' LINES TERMINATED BY \'\n\' FROM cc_export_tmp');
+PREPARE stmt2 FROM @oOutput;         
+EXECUTE stmt2;
+DEALLOCATE PREPARE stmt1;
+DEALLOCATE PREPARE stmt2;
 
 DROP TABLE IF EXISTS `cc_export_tmp`;
