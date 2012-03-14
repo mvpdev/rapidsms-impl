@@ -405,7 +405,7 @@ ALTER TABLE cc_export_tmp DROP encounter_year_mod;
 ALTER TABLE cc_export_tmp DROP encounter_month_mod;
 ALTER TABLE cc_export_tmp DROP encounter_day_mod;
 ALTER TABLE cc_export_tmp DROP nutrition_status;
-
+DELETE FROM cc_export_tmp WHERE encounter_date_mod >= DATE_SUB(NOW(), INTERVAL 30 DAY);
 
 set @oFilename = "";
 PREPARE stmt1 FROM 'SELECT CONCAT("/tmp/", substring(research_id, 1,2), "_Form_C_", DATE_FORMAT(NOW(), "%Y-%m-%d"), ".csv") INTO @oFilename  FROM research_patient limit 1';
