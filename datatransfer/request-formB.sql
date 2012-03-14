@@ -4,7 +4,7 @@ CREATE TEMPORARY TABLE `cc_export_tmp`
 SELECT 'Seq' as Seq, 'delta_days', 'encounter_date', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
 'encounter_day_mod', 'encounter_type', 'chw', 'hohh', 'location', 'V1_available',  'V2_numofchildren', 'V3_counseling_codes',
   'E1_numofsick', 'E2_numofrdtusedonother', 'E3_numofrdtpositive', 'E4_numontreatement', 
- 'P1_noofwomen', 'P2_womenusingfp', 'P3_num_pills_given', 'P4_num_women_given_pills'
+ 'P1_noofwomen', 'P2_womenusingfp', 'P3_num_pills_given', 'P4_num_women_given_pills', 'source'
  UNION
 SELECT
   cc_ccrpt.encounter_id as Seq,
@@ -27,7 +27,8 @@ SELECT
   NULL  AS numontreatement,
   NULL as noofwomen, NULL as womenusingfp,
   NULL AS num_pills_given,
-  NULL AS num_women_given_pills
+  NULL AS num_women_given_pills,
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
 FROM
   cc_hhvisitrpt
 INNER JOIN cc_ccrpt
@@ -81,7 +82,8 @@ UNION
   cc_fprpt.women as noofwomen,
   cc_fprpt.women_using as womenusingfp,
   NULL AS num_pills_given,
-  NULL AS num_women_given_pills
+  NULL AS num_women_given_pills,
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_fprpt
@@ -111,7 +113,8 @@ SELECT
   NULL as noofwomen,
   NULL as womenusingfp,
   NULL AS num_pills_given,
-  NULL AS num_women_given_pills
+  NULL AS num_women_given_pills,
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_sickrpt
@@ -141,7 +144,8 @@ SELECT
   NULL as noofwomen,
   NULL as womenusingfp,
   cc_bcprpt.pills AS num_pills_given,
-  cc_bcprpt.women AS num_women_given_pills
+  cc_bcprpt.women AS num_women_given_pills,
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
 FROM  cc_ccrpt
 INNER JOIN cc_bcprpt
 ON
@@ -151,9 +155,11 @@ ON
   cc_encounter.id = cc_ccrpt.encounter_id
   ;  
 ALTER TABLE cc_export_tmp DROP delta_days;
+ALTER TABLE cc_export_tmp DROP encounter_date;
 ALTER TABLE cc_export_tmp DROP encounter_year_mod;
 ALTER TABLE cc_export_tmp DROP encounter_month_mod;
 ALTER TABLE cc_export_tmp DROP encounter_day_mod;
+DELETE FROM cc_export_tmp WHERE encounter_date_mod >= DATE_SUB(NOW(), INTERVAL 30 DAY);
 
 set @oFilename = "";
 PREPARE stmt1 FROM 'SELECT CONCAT("/tmp/", substring(research_id, 1,2), "_Form_B_", DATE_FORMAT(NOW(), "%Y-%m-%d"), ".csv") INTO @oFilename  FROM research_patient limit 1';
