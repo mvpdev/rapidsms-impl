@@ -47,7 +47,7 @@ SELECT
     (SELECT sbmc.incident_date FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_date, 
     (SELECT DATE_ADD(sbmc.incident_date,  INTERVAL delta_days DAY) FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_date_mod, 
     (SELECT sbmc.type FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_type,
-  CASE WHEN EXTRACT(HOUR FROM e.encounter_date)=12 AND EXTRACT(MINUTE FROM e.encounter_date)=0 AND EXTRACT(SECOND FROM e.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM e.encounter_date)=12 AND EXTRACT(MINUTE FROM e.encounter_date)=0 AND EXTRACT(SECOND FROM e.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM cc_encounter as e
 UNION SELECT 
 NULL, # Seq

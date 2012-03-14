@@ -36,7 +36,7 @@ SELECT -- Followup Report
   NULL AS rdt_result,
   NULL as medicines_given,
   NULL AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_furpt
@@ -75,7 +75,7 @@ SELECT -- Danger Signs Report
   NULL AS rdt_result,
   NULL as medicines_given,
   NULL AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_dsrpt
 INNER JOIN cc_ccrpt
@@ -139,7 +139,7 @@ SELECT -- Neonatal Report
   NULL AS rdt_result,
   NULL as medicines_given,
   NULL AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_pregrpt
@@ -178,7 +178,7 @@ UNION
   NULL AS rdt_result,
   NULL as medicines_given,
   NULL AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_neorpt
@@ -217,7 +217,7 @@ UNION
   NULL AS rdt_result,
   NULL as medicines_given,
   NULL AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_uonerpt
@@ -256,7 +256,7 @@ UNION
   NULL AS rdt_result,
   NULL as medicines_given,
   NULL AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_nutrpt
@@ -295,7 +295,7 @@ UNION
   cc_fevrpt.rdt_result AS rdt_result,
   NULL as medicines_given,
   NULL AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_fevrpt
@@ -334,7 +334,7 @@ SELECT -- Referral Report
   NULL AS rdt_result,
   NULL as medicines_given,
   cc_refrpt.urgency AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_refrpt
@@ -373,7 +373,7 @@ SELECT -- Medicine Given Report
   NULL AS rdt_result,
   v_cc_medicines_given.codes as medicines_given,
   NULL AS referral,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_medsrpt
 INNER JOIN cc_ccrpt

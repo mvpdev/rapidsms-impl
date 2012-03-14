@@ -28,7 +28,7 @@ SELECT
   NULL as noofwomen, NULL as womenusingfp,
   NULL AS num_pills_given,
   NULL AS num_women_given_pills,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_hhvisitrpt
 INNER JOIN cc_ccrpt
@@ -83,7 +83,7 @@ UNION
   cc_fprpt.women_using as womenusingfp,
   NULL AS num_pills_given,
   NULL AS num_women_given_pills,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_fprpt
@@ -114,7 +114,7 @@ SELECT
   NULL as womenusingfp,
   NULL AS num_pills_given,
   NULL AS num_women_given_pills,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM
   cc_ccrpt
 INNER JOIN cc_sickrpt
@@ -145,7 +145,7 @@ SELECT
   NULL as womenusingfp,
   cc_bcprpt.pills AS num_pills_given,
   cc_bcprpt.women AS num_women_given_pills,
-  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
+  CASE WHEN EXTRACT(HOUR FROM cc_encounter.encounter_date)=12 AND EXTRACT(MINUTE FROM cc_encounter.encounter_date)=0 AND EXTRACT(SECOND FROM cc_encounter.encounter_date)=0 THEN 'D' ELSE 'S' END AS source
 FROM  cc_ccrpt
 INNER JOIN cc_bcprpt
 ON
