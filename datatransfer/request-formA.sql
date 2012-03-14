@@ -9,7 +9,7 @@ CREATE TEMPORARY TABLE `cc_export_tmp`
 SELECT 'Seq', 'patient_name', 'delta_days', 'encounter_date', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
 'encounter_day_mod', 'patient_dob', 'patient_dob_mod', 'age_at_encounter', 'original_encounter_date', 'patient_registered_on_mod', 
 'patient_id', 'location', 'patient_gender', 'hohh_id', 'hohh', 'mother_id', 'mother', 'chw', 'bir_delivered_in_hf', 
-'bir_weight', 'status', 'death_date', 'death_date_mod', 'sbmc_date', 'sbmc_date_mod', 'sbmc_type'
+'bir_weight', 'status', 'death_date', 'death_date_mod', 'sbmc_date', 'sbmc_date_mod', 'sbmc_type', 'source'
 UNION 
 SELECT 
         e.id as Seq, 
@@ -46,7 +46,8 @@ SELECT
     (SELECT DATE_ADD(dr.death_date,  INTERVAL delta_days DAY) FROM cc_deathrpt as dr, cc_ccrpt as cc WHERE dr.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as death_date_mod, 
     (SELECT sbmc.incident_date FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_date, 
     (SELECT DATE_ADD(sbmc.incident_date,  INTERVAL delta_days DAY) FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_date_mod, 
-    (SELECT sbmc.type FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_type
+    (SELECT sbmc.type FROM cc_sbmcrpt as sbmc, cc_ccrpt as cc WHERE sbmc.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as sbmc_type,
+  CASE WHEN EXTRACT(HOUR FROM e.encounter_date)=12 AND EXTRACT(MINUTE FROM e.encounter_date)=0 AND EXTRACT(SECOND FROM e.encounter_date)=0 THEN 'DATAENTRY' ELSE 'SMS' END AS source
 FROM cc_encounter as e
 UNION SELECT 
 NULL, # Seq
@@ -77,19 +78,24 @@ ccd.dod as death_date,
 (SELECT DATE_ADD(ccd.dod,  INTERVAL dead_delta_days DAY) ) as death_date_mod,
 NULL, # sbmc date
 NULL, # sbmc date mod
-NULL # sbmc type,
-
+NULL, # sbmc type,
+NULL # source
 FROM cc_dead_person as ccd;
 
+ALTER TABLE cc_export_tmp DROP patient_dob;
 ALTER TABLE cc_export_tmp DROP patient_name;
 ALTER TABLE cc_export_tmp DROP delta_days;
+ALTER TABLE cc_export_tmp DROP encounter_date;
 ALTER TABLE cc_export_tmp DROP encounter_year_mod;
 ALTER TABLE cc_export_tmp DROP encounter_month_mod;
 ALTER TABLE cc_export_tmp DROP encounter_day_mod;
 ALTER TABLE cc_export_tmp DROP original_encounter_date;
+ALTER TABLE cc_export_tmp DROP death_date;
+ALTER TABLE cc_export_tmp DROP sbmc_date;
 ALTER TABLE cc_export_tmp DROP hohh_id;
 ALTER TABLE cc_export_tmp DROP mother_id;
 ALTER TABLE cc_export_tmp DROP patient_registered_on_mod;
+DELETE FROM cc_export_tmp WHERE encounter_date_mod >= DATE_SUB(NOW(), INTERVAL 30 DAY);
 
 
 set @oFilename = "";
