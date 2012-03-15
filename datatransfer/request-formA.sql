@@ -1,5 +1,5 @@
 # gender: M  (male),  F (female)
-# status: 1 (active), 0 (innactive), -1 (dead)
+# status: 1 (active), 0 (inactive), -1 (dead)
 # SBMC: S (still birth), M (miscarriage)
 # Delivered in HF: Y (yes), N (no), U (unknown)
 
@@ -82,6 +82,7 @@ NULL, # sbmc type,
 NULL # source
 FROM cc_dead_person as ccd;
 
+ALTER TABLE cc_export_tmp DROP Seq;
 ALTER TABLE cc_export_tmp DROP patient_dob;
 ALTER TABLE cc_export_tmp DROP patient_name;
 ALTER TABLE cc_export_tmp DROP delta_days;

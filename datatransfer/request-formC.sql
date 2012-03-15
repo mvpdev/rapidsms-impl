@@ -407,7 +407,8 @@ INNER JOIN
   )
  v_cc_medicines_given ON cc_medsrpt.ccreport_ptr_id =
   v_cc_medicines_given.medicinegivenreport_id ;  
-  
+
+ALTER TABLE cc_export_tmp DROP Seq;
 ALTER TABLE cc_export_tmp DROP delta_days;
 ALTER TABLE cc_export_tmp DROP encounter_date;
 ALTER TABLE cc_export_tmp DROP encounter_year_mod;

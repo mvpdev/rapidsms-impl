@@ -153,7 +153,9 @@ ON
 INNER JOIN cc_encounter
 ON
   cc_encounter.id = cc_ccrpt.encounter_id
-  ;  
+  ;
+
+ALTER TABLE cc_export_tmp DROP Seq;
 ALTER TABLE cc_export_tmp DROP delta_days;
 ALTER TABLE cc_export_tmp DROP encounter_date;
 ALTER TABLE cc_export_tmp DROP encounter_year_mod;
