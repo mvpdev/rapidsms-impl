@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS `cc_export_tmp`;
 CREATE TEMPORARY TABLE `cc_export_tmp`
 SELECT 'Seq', 'patient_name', 'delta_days', 'encounter_date', 'encounter_date_mod', 'encounter_year_mod', 'encounter_month_mod', 
 'encounter_day_mod', 'patient_dob', 'patient_dob_mod', 'age_at_encounter', 'original_encounter_date', 'patient_registered_on_mod', 
-'patient_id', 'location', 'patient_gender', 'hohh_id', 'hohh', 'mother_id', 'mother', 'chw', 'bir_delivered_in_hf', 
+'patient_id', 'location', 'patient_gender', 'hohh_id', 'hohh', 'mother_id', 'mother', 'chw', 'bir_delivered_in_hf',
 'bir_weight', 'status', 'death_date', 'death_date_mod', 'sbmc_date', 'sbmc_date_mod', 'sbmc_type', 'source'
 UNION 
 SELECT 
@@ -34,8 +34,8 @@ SELECT
 
     (SELECT p.household_id FROM cc_patient as p WHERE p.id=e.patient_id) as hohh_id,  # to remove
     (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=hohh_id AND p.health_id=rp.health_id) as hohh, 
-    (SELECT p.mother_id FROM cc_patient as p WHERE p.id=e.patient_id) as mother_id,  # to remove
-    (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=mother_id AND p.health_id=rp.health_id) as mother, 
+    (SELECT p.mother_id FROM cc_patient as p WHERE p.id=e.patient_id) as pmother_id,  # to remove
+    (SELECT rp.research_id FROM cc_patient as p, research_patient as rp WHERE p.id=pmother_id AND p.health_id=rp.health_id) as mother,
     (SELECT rchw.research_id FROM cc_patient as p, research_chw as rchw WHERE p.id=e.patient_id AND rchw.chw_id=p.chw_id) as chw, 
 
     (SELECT bir.clinic_delivery FROM cc_birthrpt as bir, cc_ccrpt as cc WHERE bir.ccreport_ptr_id=cc.id and cc.encounter_id=e.id) as bir_delivered_in_hf, 
