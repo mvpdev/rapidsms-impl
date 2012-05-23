@@ -38,6 +38,12 @@
     <pythonpath>/usr/local/lib/python2.6/dist-packages/anyjson-0.3-py2.6.egg</pythonpath>
     <pythonpath>/usr/local/lib/python2.6/dist-packages/celery-2.1.4-py2.6.egg</pythonpath>
     <pythonpath>/usr/local/lib/python2.6/dist-packages/django_celery-2.1.4-py2.6.egg</pythonpath>
+    <pythonpath>/usr/local/lib/python2.6/dist-packages/ethiopian_date-0.1.1-py2.6.egg</pythonpath>
+    <pythonpath>/usr/local/lib/python2.6/dist-packages/gdata-2.0.14-py2.6.egg</pythonpath>
+    <pythonpath>/usr/local/lib/python2.6/dist-packages/celery-2.3.3-py2.6.egg</pythonpath>
+    <pythonpath>/usr/local/lib/python2.6/dist-packages/django_celery-2.3.3-py2.6.egg</pythonpath>
+    <pythonpath>/usr/local/lib/python2.6/dist-packages/kombu-1.4.1-py2.6.egg</pythonpath>
+    <pythonpath>//usr/local/lib/python2.6/dist-packages/ordereddict-1.1-py2.6.egg</pythonpath>
     <pythonpath>/home/mvp/sms</pythonpath>
     <pythonpath>/home/mvp/sms/apps</pythonpath>
     <pythonpath>/home/mvp/sms/lib</pythonpath>
