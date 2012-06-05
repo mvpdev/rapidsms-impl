@@ -10,6 +10,7 @@
     See https://github.com/mvpdev/smpp2local '''
 
 import time
+import math
 import re
 from datetime import datetime
 
@@ -17,10 +18,38 @@ from rapidsms.backends import Backend
 import backend
 from rapidsms.message import Message
 import couchdb
-from pygsm.gsmpdu import get_outbound_pdus
 
+MSG_LIMITS = {
+    # 'encoding', (max_normal, max_csm)
+    'gsm': (160,152),
+    'ucs2': (70,67)
+}
+MAX_CSM_SEGMENTS = 255
 MAX_SMS_LENGTH = 160
 
+def split_msg_ucs2(text):
+    """
+    Returns a list of text split by MSG_LIMITS['ucs2']
+    """
+    encoding = 'ucs2'
+    encoded_text = text
+
+    csm_max = MSG_LIMITS[encoding][1]
+    if len(encoded_text)>(MAX_CSM_SEGMENTS*csm_max):
+        raise ValueError('Message text too long')
+
+    # see if we are under the single PDU limit
+    if len(encoded_text)<=MSG_LIMITS[encoding][0]:
+        return [text]
+
+    # split the text
+    num = int(math.ceil(len(encoded_text)/float(MSG_LIMITS[encoding][0])))
+    rs = []
+    for seq in range(num):
+        i = seq*csm_max
+        seg_txt = encoded_text[i:i+csm_max]
+        rs.append(seg_txt)
+    return rs
 
 def sms_split(text):
     ''' Split SMS/Text proportianally 
@@ -119,9 +148,9 @@ class Backend(Backend):
         ''' creates CouchDB documents for outgoing messages '''
         sms_date=datetime.now()
         identity = msg.connection.identity
-        sms_list = get_outbound_pdus(msg.text, identity)
-        for pdu in sms_list:
-            document = document_from_sms(identity, pdu.text, date=sms_date)
+        sms_list = split_msg_ucs2(msg.text)
+        for text in sms_list:
+            document = document_from_sms(identity, text, date=sms_date)
 
             try:
                 doc = self.save_document_to_couch(document)
