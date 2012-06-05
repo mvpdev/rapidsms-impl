@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4 coding=utf-8
-# maintainer: rgaudin
+# maintainer: rgaudin, ukanga
 
 ''' CouchDB Backend
 
@@ -17,6 +17,7 @@ from rapidsms.backends import Backend
 import backend
 from rapidsms.message import Message
 import couchdb
+from pygsm.gsmpdu import get_outbound_pdus
 
 MAX_SMS_LENGTH = 160
 
@@ -116,11 +117,11 @@ class Backend(Backend):
 
     def send(self, msg):
         ''' creates CouchDB documents for outgoing messages '''
-        sms_list = sms_split(msg.text)
         sms_date=datetime.now()
         identity = msg.connection.identity
-        for text in sms_list:
-            document = document_from_sms(identity, text, date=sms_date)
+        sms_list = get_outbound_pdus(msg.text, identity)
+        for pdu in sms_list:
+            document = document_from_sms(identity, pdu.text, date=sms_date)
 
             try:
                 doc = self.save_document_to_couch(document)
