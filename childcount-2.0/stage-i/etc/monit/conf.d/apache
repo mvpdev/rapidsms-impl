@@ -1,0 +1,8 @@
+check process apache
+   with pidfile /var/run/apache2.pid
+   start program = "/usr/sbin/apache2ctl start" as uid root and gid root
+   stop program = "/usr/sbin/apache2ctl stop" as uid root and gid root
+   if totalmem is greater than 860.0 MB for 2 cycles then restart      # eating up memory?
+   if loadavg(5min) greater than 10 for 8 cycles then restart          # bad, bad, bad
+   if 20 restarts within 20 cycles then timeout                        # something is wrong, call the sys-admin
+   group apache
