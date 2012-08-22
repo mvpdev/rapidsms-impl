@@ -14,7 +14,7 @@ project_root: /home/mvp/src
 #the URL for this project
 hostname: childcount.rapidsms
 #the admin email (used in the apache config file)
-admin_email: ukanga@gmail.com
+admin_email: childcount-dev@googlegroups.com
 #the user that the server will run as (used in the apache config)
 server_user: www-data
 # everything will be installed in "/%{project_root}/${install_name}"
