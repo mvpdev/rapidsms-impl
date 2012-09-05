@@ -28,7 +28,7 @@ import logging.handlers
 # define target HW identifiers
 VENDOR_ID = '06e0'
 PRODUCT_ID = 'f111'
-LOCALINI = '/home/mvp/sms/local.ini'
+LOCALINI = '/home/mvp/src/childcount/childcount/local.ini'
 
 
 def sanitize_hex(hex_):
