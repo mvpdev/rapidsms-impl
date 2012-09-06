@@ -1,0 +1,2 @@
+CELERYD_USER=www-data
+CELERYD_GROUP=mvp
